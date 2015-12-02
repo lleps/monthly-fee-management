@@ -1,12 +1,10 @@
 package com.lleps.mfm;
 
 import com.alee.laf.WebLookAndFeel;
-import com.lleps.mfm.gui.FloatingMessageView;
+import com.lleps.mfm.view.FloatingMessageView;
 import com.lleps.mfm.model.Category;
 
 import javax.swing.*;
-import java.io.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**

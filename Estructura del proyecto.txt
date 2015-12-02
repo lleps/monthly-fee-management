@@ -1,0 +1,41 @@
+-Convertir modelos al formato de jfx
+-Objetos DAO
+
+Un Main con una fxlist de categorias y getCategories(), lo que hace es cargarlas a todas. desps carga al view
+"categoryOverview" y le dice setMain(this). el category asigna al tabPane main.getCategories(). CategoryOverviewController
+se encarga de escuchar los listeners, y, handleAddTabClick getStringDialog() bla. ahora, para agregar, hace:
+	
+		CategoryOverviewController
+Map<Category, Tab> categoriesToTabs = new HashMap<>();
+
+handleAddCategory:
+	String name = askCategoryName()
+	checkIfIsValidCategoryName()
+	Category category = new Category(name, emptyList, emptyList)
+	try {
+  		main.getCategoryDAO().saveCategory(category);
+		Tab tab = addCategoryTab(category)
+		categoriesToTabs.put(category, tab);
+		main.getCategories().add(tab);
+		tabbedPane.selectTab(tab);
+	} catch
+		
+
+addCategoryTab(category) 
+	Tab tab = new Tab(category.getName);
+	view = loadCategoryViewFromXML()
+	controller.setMain(main);
+	controller.setCategory(category);
+
+		CategoryController
+ClientsView (searchField, table, addButton, showInactiveClientsCheckbox
+    setCategory(category)
+
+UserTableView
+    CLIENTES                                                      + -> lo agrega, y lo abre para editarlo.
+    Foto     Nombre   Apellido   Correo electrónico   Próxima cuota
+    ---------------------------------------------------------------
+
+clientsTablePane.setContent(
+
+el tema es w10 light

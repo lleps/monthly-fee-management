@@ -8,5 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="weblaf-complete-1.28" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.4" level="project" />
+    <orderEntry type="library" name="Ensemble82" level="project" />
+    <orderEntry type="library" name="rp-1.0-SNAPSHOT" level="project" />
   </component>
 </module>

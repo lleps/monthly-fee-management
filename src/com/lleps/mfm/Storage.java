@@ -1,8 +1,11 @@
 package com.lleps.mfm;
 
+import com.alee.utils.FileUtils;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
 import com.lleps.mfm.model.Payment;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -117,6 +120,27 @@ public class Storage {
             System.out.println("No se puede escribir: " + e);
             e.printStackTrace();
         }
+    }
+
+    public void removeCategory(Category category) {
+        deleteDirectory(new File(categoriesFolder, category.getName()));
+    }
+
+    private static boolean deleteDirectory(File directory) {
+        if(directory.exists()){
+            File[] files = directory.listFiles();
+            if(null!=files){
+                for(int i=0; i<files.length; i++) {
+                    if(files[i].isDirectory()) {
+                        deleteDirectory(files[i]);
+                    }
+                    else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        return(directory.delete());
     }
 
     private File getCategoryFile(Category category, String fileName) throws IOException {

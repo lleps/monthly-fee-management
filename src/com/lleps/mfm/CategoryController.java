@@ -1,6 +1,6 @@
 package com.lleps.mfm;
 
-import com.lleps.mfm.gui.*;
+import com.lleps.mfm.view.*;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
 import com.lleps.mfm.model.Payment;

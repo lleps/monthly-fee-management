@@ -1,6 +1,6 @@
 package com.lleps.mfm;
 
-import com.lleps.mfm.gui.FloatingMessageView;
+import com.lleps.mfm.view.FloatingMessageView;
 
 import javax.swing.*;
 import java.io.File;
