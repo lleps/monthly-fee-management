@@ -20,7 +20,7 @@ public class CategoryGeneratorTest {
     }
 
     CategoryGeneratorTest() {
-        String categoriess[] = {"Yoga", "M�quinas", "MMA"};
+        String categoriess[] = {"Yoga", "Máquinas", "MMA", "Pilates"};
         for (String category : categoriess) {
             Category category1 = new Category(category, 300, getRandomClients(RAND_CLIENT_COUNT),
                     getRandomPayments(RAND_PAYMENT_COUNT));
@@ -34,8 +34,8 @@ public class CategoryGeneratorTest {
         Main.main(new String[]{});
     }
 
-    int RAND_CLIENT_COUNT = 15000;
-    int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 5;
+    int RAND_CLIENT_COUNT = 25000;
+    int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
 
     private LocalDate getRandomDate() {
         return LocalDate.of(randomInt(2013, 2016), randomInt(1, 13), randomInt(1, 28));

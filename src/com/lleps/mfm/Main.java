@@ -15,7 +15,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             WebLookAndFeel.install();
 
-            FloatingMessageView.show("Cargando categorias..");
+            FloatingMessageView.show("Cargando categorias...");
             List<Category> categories = Storage.getInstance().loadAllCategories();
             FloatingMessageView.hide();
 

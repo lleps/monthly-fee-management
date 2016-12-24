@@ -7,6 +7,9 @@ import java.time.LocalDate;
  * @author leandro on 23/10/15.
  */
 public class Payment implements Serializable {
+
+    private static final long serialVersionUID = 71823917239812L;
+
     private int clientId;
     private int money;
     private LocalDate monthDate;

@@ -1,10 +1,13 @@
 package com.lleps.mfm;
 
+import com.lleps.mfm.view.FloatingMessageView;
 import com.lleps.mfm.view.MainView;
 import com.lleps.mfm.model.Category;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -19,7 +22,21 @@ public class MainController {
     MainController(List<Category> categories) {
         view = new MainView();
         view.setTitle("Gestión de cuotas de clientes");
-        view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        view.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        view.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                view.setVisible(false);
+                FloatingMessageView.show("Haciendo backup de los datos...");
+                try {
+                    Storage.getInstance().doBackup();
+                } catch (IOException exception) {
+                    Utils.reportException(exception, "Error haciendo backup.");
+                }
+                FloatingMessageView.hide();
+                System.exit(0);
+            }
+        });
         view.setExtendedState(view.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         view.setVisible(true);
 

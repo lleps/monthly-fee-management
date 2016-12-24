@@ -161,7 +161,7 @@ public class CategoryController {
                     .filter(month -> month.isAfter(lastPaymentDate))
                     .collect(Collectors.toList());
             preselectedDate = lastPaymentDate.plusMonths(1);
-            if (selectableMonths.isEmpty()) { // Empty only if clients payed all possible months
+            if (selectableMonths.isEmpty()) { // Empty only if clients paid all possible months
                 selectableMonths.add(preselectedDate);
             }
         }
@@ -240,7 +240,7 @@ public class CategoryController {
     }
 
     private void updateTable() {
-        FloatingMessageView.show("Actualizando..");
+        FloatingMessageView.show("Actualizando...");
         view.getTable().update(category.getClients(), category.getPayments());
         FloatingMessageView.hide();
     }
@@ -254,7 +254,7 @@ public class CategoryController {
     }
 
     private void saveClients() {
-        FloatingMessageView.show("Guardando..");
+        FloatingMessageView.show("Guardando...");
         try {
             Storage.getInstance().saveCategoryClients(category);
         } catch (Exception e) {
@@ -272,7 +272,7 @@ public class CategoryController {
     }
 
     private void savePayments() {
-        FloatingMessageView.show("Guardando..");
+        FloatingMessageView.show("Guardando...");
         try {
             Storage.getInstance().saveCategoryPayments(category);
         } catch (Exception e) {
