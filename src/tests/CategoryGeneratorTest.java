@@ -85,7 +85,7 @@ public class CategoryGeneratorTest {
         List<Client> result = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             Client client = new Client(i, true, getRandomName(), getRandomLastName(), getRandomPhone(),
-                    getRandomHomeAddress(), getRandomMail(), getRandomDate(), "");
+                    getRandomHomeAddress(), getRandomMail(), getRandomDate(), "", new ArrayList<>());
             if (randomInt(1, 3) == 1) client.setInactive(true);
             result.add(client);
         }

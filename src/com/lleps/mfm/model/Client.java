@@ -2,6 +2,8 @@ package com.lleps.mfm.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author leandro on 17/10/15.
@@ -17,11 +19,21 @@ public class Client implements Serializable {
     private String phoneNumber;
     private String homeAddress;
     private String mail;
-    LocalDate inscriptionDate;
+    private LocalDate inscriptionDate;
     private String observations;
     private boolean inactive;
+    private List<ExercisePlan> exercisePlans = new ArrayList<>(); // For serialisation compatibility
 
-    public Client(int id, boolean male, String firstName, String lastName, String phoneNumber, String homeAddress, String mail, LocalDate inscriptionDate, String observations) {
+    public Client(int id,
+                  boolean male,
+                  String firstName,
+                  String lastName,
+                  String phoneNumber,
+                  String homeAddress,
+                  String mail,
+                  LocalDate inscriptionDate,
+                  String observations,
+                  List<ExercisePlan> exercisePlans) {
         this.id = id;
         this.male = male;
         this.firstName = firstName;
@@ -31,6 +43,7 @@ public class Client implements Serializable {
         this.mail = mail;
         this.inscriptionDate = inscriptionDate;
         this.observations = observations;
+        this.exercisePlans = exercisePlans;
     }
 
     public void setInactive(boolean inactive) {
@@ -103,6 +116,14 @@ public class Client implements Serializable {
 
     public String getObservations() {
         return observations;
+    }
+
+    public List<ExercisePlan> getExercisePlans() {
+        return exercisePlans;
+    }
+
+    public void setExercisePlans(List<ExercisePlan> exercisePlans) {
+        this.exercisePlans = exercisePlans;
     }
 
     @Override

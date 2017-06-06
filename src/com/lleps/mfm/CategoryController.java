@@ -1,5 +1,6 @@
 package com.lleps.mfm;
 
+import com.lleps.mfm.model.ExercisePlan;
 import com.lleps.mfm.view.*;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
@@ -10,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,6 +104,14 @@ public class CategoryController {
             showEditClientDialog(client);
         });
         menu.add(editItem);
+
+        JMenuItem exercisesItem = new JMenuItem("Planes", Resources.getInstance().PLUS_ICON);
+        exercisesItem.addActionListener(e -> {
+            ClientExercisePlansView dialog = new ClientExercisePlansView(category, client);
+            dialog.setLocationRelativeTo(view);
+            dialog.setVisible(true);
+        });
+        menu.add(exercisesItem);
 
         JMenuItem deleteItem = new JMenuItem("Eliminar", Resources.getInstance().TRASH_ICON);
         deleteItem.addActionListener(e -> {
@@ -207,7 +217,7 @@ public class CategoryController {
         clientView.setAcceptButtonListener(e -> {
             Client client = new Client(getFreeClientId(), clientView.isMaleSelected(), clientView.getNameField(),
                     clientView.getLastNameField(), clientView.getPhoneNumberField(), clientView.getHomeAddressField(),
-                    clientView.getMailField(), LocalDate.now(), clientView.getObservationsField());
+                    clientView.getMailField(), LocalDate.now(), clientView.getObservationsField(), new ArrayList<>());
             clientView.dispose();
             addClient(client);
             showPaymentsDialog(client);
