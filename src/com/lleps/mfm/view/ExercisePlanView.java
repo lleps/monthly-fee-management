@@ -63,9 +63,20 @@ public class ExercisePlanView extends JDialog {
         exercises.setModel(new DefaultTableModel(plan.getExercises().clone(), columns));
         exercises.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-
         sendEmailButton.addActionListener(e -> {
+            String emailReceiver = (String) JOptionPane.showInputDialog(null,
+                    "Enviar plan a la dirección de correo:",
+                    "Enviar plan por email",
+                    JOptionPane.PLAIN_MESSAGE,
+                    Resources.getInstance().MAIL_ICON, null,
+                    client.getMail());
+
+            if (emailReceiver == null) {
+                return;
+            }
+
             try {
+                FloatingMessageView.show("Generando PDF...");
                 // Build PDF
                 Document document = new Document();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -96,8 +107,9 @@ public class ExercisePlanView extends JDialog {
                 document.close();
 
                 // Send email
-                final String username = "somemail"; // TODO
-                final String password = "somepw";
+                FloatingMessageView.show("Enviando...");
+                final String username = "gimnasio653vcp@gmail.com";
+                final String password = "gymgymgym";
                 Properties props = new Properties();
                 props.put("mail.smtp.auth", "true");
                 props.put("mail.smtp.starttls.enable", "true");
@@ -114,7 +126,6 @@ public class ExercisePlanView extends JDialog {
                 MimeBodyPart textBodyPart = new MimeBodyPart();
                 textBodyPart.setText("Plan " + plan.getName());
 
-
                 byte[] bytes = stream.toByteArray();
                 DataSource dataSource = new ByteArrayDataSource(bytes, "application/pdf");
                 MimeBodyPart pdfBodyPart = new MimeBodyPart();
@@ -125,16 +136,16 @@ public class ExercisePlanView extends JDialog {
                 mimeMultipart.addBodyPart(textBodyPart);
                 mimeMultipart.addBodyPart(pdfBodyPart);
 
-                message.setFrom(new InternetAddress("leandro.barbero122@gmail.com"));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("leandro.barbero122@gmail.com"));
+                message.setFrom(new InternetAddress(username));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailReceiver));
                 message.setSubject("Plan de ejercicios gimnasio 653");
                 message.setContent(mimeMultipart);
 
                 Transport.send(message);
+                FloatingMessageView.hide();
             } catch (MessagingException | DocumentException e1) {
-                Utils.reportException(e1, "error generating pdf");
+                Utils.reportException(e1, "Error enviando el email.");
             }
-
         });
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

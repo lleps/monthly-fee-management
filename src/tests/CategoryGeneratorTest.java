@@ -5,7 +5,9 @@ import com.lleps.mfm.Storage;
 import com.lleps.mfm.Utils;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
+import com.lleps.mfm.model.ExercisePlan;
 import com.lleps.mfm.model.Payment;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,11 +36,11 @@ public class CategoryGeneratorTest {
         Main.main(new String[]{});
     }
 
-    int RAND_CLIENT_COUNT = 25000;
+    int RAND_CLIENT_COUNT = 2000;
     int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
 
     private LocalDate getRandomDate() {
-        return LocalDate.of(randomInt(2013, 2016), randomInt(1, 13), randomInt(1, 28));
+        return LocalDate.of(randomInt(2015, 2018), randomInt(1, 13), randomInt(1, 28));
     }
 
     private int randomInt(int startInclusive, int endExclusive) {
@@ -85,9 +87,45 @@ public class CategoryGeneratorTest {
         List<Client> result = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             Client client = new Client(i, true, getRandomName(), getRandomLastName(), getRandomPhone(),
-                    getRandomHomeAddress(), getRandomMail(), getRandomDate(), "", new ArrayList<>());
+                    getRandomHomeAddress(), getRandomMail(), getRandomDate(), "", getRandomPlans());
             if (randomInt(1, 3) == 1) client.setInactive(true);
             result.add(client);
+        }
+        return result;
+    }
+
+    private String randString(String[] chances) {
+        return chances[RandomUtils.nextInt(0, chances.length)];
+    }
+
+    private List<ExercisePlan> getRandomPlans() {
+        List<ExercisePlan> result = new ArrayList<>();
+        int planCount = RandomUtils.nextInt(0, 4);
+        String[] planNames = { "pecho", "piernas", "basico", "avanzado", "inicial", "hombros", "volumen", "resistencia"};
+        String[][] exercises = new String[24][5];
+        int exerciseCount = RandomUtils.nextInt(0, 20);
+        String[] exerciseName = { "mancuerna", "hombro", "pecho", "bici", "biceps", "triceps", "espalda", "disco", "spinning"};
+        String[] repetitions = { "10", "15", "12" };
+        String[] series = { "2", "3", "4" };
+        String[] kgs = { "15", "20", "25", "30", "40", "50", "60"};
+        for (int i = 0; i < exerciseCount; i++) {
+            exercises[i][0] = randString(exerciseName);
+            exercises[i][1] = randString(series);
+            exercises[i][2] = randString(kgs);
+            exercises[i][3] = randString(repetitions);
+            exercises[i][4] = "";
+        }
+        for (int i = exerciseCount; i < exercises.length; i++) {
+            exercises[i][0] = "";
+            exercises[i][1] = "";
+            exercises[i][2] = "";
+            exercises[i][3] = "";
+            exercises[i][4] = "";
+        }
+        for (int i = 0; i < planCount; i++) {
+            ExercisePlan plan = new ExercisePlan(planNames[RandomUtils.nextInt(0, planNames.length)],
+                    LocalDate.now().minusDays(RandomUtils.nextInt(0, 90)), exercises);
+            result.add(plan);
         }
         return result;
     }

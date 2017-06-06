@@ -15,6 +15,7 @@ public class FloatingMessageView {
         if (view == null) view = new View();
         view.setVisible(true);
         view.setText(message);
+        view.setAlwaysOnTop(true);
     }
 
     public static void hide() {

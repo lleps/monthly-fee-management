@@ -22,7 +22,7 @@ public class Client implements Serializable {
     private LocalDate inscriptionDate;
     private String observations;
     private boolean inactive;
-    private List<ExercisePlan> exercisePlans = new ArrayList<>(); // For serialisation compatibility
+    private List<ExercisePlan> exercisePlans;
 
     public Client(int id,
                   boolean male,

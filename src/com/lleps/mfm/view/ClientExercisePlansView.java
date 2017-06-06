@@ -31,6 +31,9 @@ public class ClientExercisePlansView extends JDialog {
         this.category = category;
         this.client = client;
 
+        // For files serialised with older versions
+        if (client.getExercisePlans() == null) client.setExercisePlans(new ArrayList<>());
+
         setIconImage(Resources.getInstance().APP_IMAGE);
         setContentPane(contentPane);
         setModal(true);
