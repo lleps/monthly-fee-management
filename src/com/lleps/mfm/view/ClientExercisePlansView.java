@@ -45,10 +45,12 @@ public class ClientExercisePlansView extends JDialog {
             int planIndex = i;
             plans[i].addActionListener(e -> {
                 if (planIndex < client.getExercisePlans().size()) {
-                    ExercisePlanView view = new ExercisePlanView(category, client, client.getExercisePlans().get(planIndex));
-                    view.pack();
-                    view.setLocationRelativeTo(this);
-                    view.setVisible(true);
+                    Utils.doUsingNativeLAF(() -> {
+                        ExercisePlanView view = new ExercisePlanView(category, client, client.getExercisePlans().get(planIndex));
+                        view.pack();
+                        view.setLocationRelativeTo(this);
+                        view.setVisible(true);
+                    });
                     updatePlanButtonsVisibility();
                 }
             });
@@ -63,9 +65,9 @@ public class ClientExercisePlansView extends JDialog {
                     "Nuevo plan");
 
             if (planName != null) {
-                String[][] exercises = new String[23][5];
-                for (int i = 0; i < 23; i++) {
-                    for (int j = 0; j < 5; j++) {
+                String[][] exercises = new String[25][4];
+                for (int i = 0; i < exercises.length; i++) {
+                    for (int j = 0; j < exercises[i].length; j++) {
                         exercises[i][j] = "";
                     }
                 }

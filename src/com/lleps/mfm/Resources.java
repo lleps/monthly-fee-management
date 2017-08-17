@@ -34,6 +34,7 @@ public class Resources {
     public final Icon BLANK_ICON = getIconFromResources("blank.png", new Dimension(2, 25));
     public final Icon MAIL_ICON = getIconFromResources("mail.png", new Dimension(25, 25));
     public final Icon LOADING_ICON = getIconFromResources("loading.gif", new Dimension(25, 25));
+    public final Icon DOWNLOAD_ICON = getIconFromResources("download.png", new Dimension(25, 25));
 
     private final static String RESOURCES_PATH = "/resources/";
 

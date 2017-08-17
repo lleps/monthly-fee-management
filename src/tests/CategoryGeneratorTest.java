@@ -36,7 +36,7 @@ public class CategoryGeneratorTest {
         Main.main(new String[]{});
     }
 
-    int RAND_CLIENT_COUNT = 2000;
+    int RAND_CLIENT_COUNT = 300;
     int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
 
     private LocalDate getRandomDate() {
@@ -102,25 +102,23 @@ public class CategoryGeneratorTest {
         List<ExercisePlan> result = new ArrayList<>();
         int planCount = RandomUtils.nextInt(0, 4);
         String[] planNames = { "pecho", "piernas", "basico", "avanzado", "inicial", "hombros", "volumen", "resistencia"};
-        String[][] exercises = new String[24][5];
+        String[][] exercises = new String[25][4];
         int exerciseCount = RandomUtils.nextInt(0, 20);
         String[] exerciseName = { "mancuerna", "hombro", "pecho", "bici", "biceps", "triceps", "espalda", "disco", "spinning"};
-        String[] repetitions = { "10", "15", "12" };
         String[] series = { "2", "3", "4" };
-        String[] kgs = { "15", "20", "25", "30", "40", "50", "60"};
+        String[] repetitions = { "10", "15", "12" };
+        String[] pause = { "15", "20", "25", "30", "40", "50", "60"};
         for (int i = 0; i < exerciseCount; i++) {
             exercises[i][0] = randString(exerciseName);
             exercises[i][1] = randString(series);
-            exercises[i][2] = randString(kgs);
-            exercises[i][3] = randString(repetitions);
-            exercises[i][4] = "";
+            exercises[i][2] = randString(repetitions);
+            exercises[i][3] = randString(pause);
         }
         for (int i = exerciseCount; i < exercises.length; i++) {
             exercises[i][0] = "";
             exercises[i][1] = "";
             exercises[i][2] = "";
             exercises[i][3] = "";
-            exercises[i][4] = "";
         }
         for (int i = 0; i < planCount; i++) {
             ExercisePlan plan = new ExercisePlan(planNames[RandomUtils.nextInt(0, planNames.length)],

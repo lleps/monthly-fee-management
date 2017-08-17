@@ -1,5 +1,6 @@
 package com.lleps.mfm;
 
+import com.alee.laf.WebLookAndFeel;
 import com.lleps.mfm.view.FloatingMessageView;
 
 import javax.swing.*;
@@ -21,14 +22,6 @@ import java.util.Locale;
  */
 public class Utils {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    public static void showInfoBox(String message) {
-        FloatingMessageView.show(message);
-    }
-
-    public static void hideInfoBox() {
-        FloatingMessageView.hide();
-    }
 
     public static String getMonthWithYear(LocalDate date) {
         return date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
@@ -83,7 +76,17 @@ public class Utils {
         }
     }
 
-    public static String getStackTrace(Throwable throwable) {
+    public static void doUsingNativeLAF(Runnable action) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+        action.run();
+        WebLookAndFeel.install();
+    }
+
+    private static String getStackTrace(Throwable throwable) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw, true);
         throwable.printStackTrace(pw);
