@@ -65,7 +65,7 @@ public class ClientExercisePlansView extends JDialog {
                     "Nuevo plan");
 
             if (planName != null) {
-                String[][] exercises = new String[25][4];
+                String[][] exercises = new String[36][4];
                 for (int i = 0; i < exercises.length; i++) {
                     for (int j = 0; j < exercises[i].length; j++) {
                         exercises[i][j] = "";

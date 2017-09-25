@@ -1,6 +1,5 @@
 package com.lleps.mfm;
 
-import com.lleps.mfm.model.ExercisePlan;
 import com.lleps.mfm.view.*;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
@@ -11,7 +10,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -115,9 +113,13 @@ public class CategoryController {
 
         JMenuItem deleteItem = new JMenuItem("Eliminar", Resources.getInstance().TRASH_ICON);
         deleteItem.addActionListener(e -> {
-            int response = JOptionPane.showConfirmDialog(view, "¿Eliminar permanentemente a " + client.getFirstName() + " " + client.getLastName() + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            int response = JOptionPane.showConfirmDialog(
+                    view,
+                    "¿Eliminar permanentemente a " + client.getFirstName() + " " + client.getLastName() + " " +
+                    "y todos sus pagos?", "Confirmar",
+                    JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
-                removeClient(client);
+                removeClientAndTheirPayments(client);
             }
         });
         menu.add(deleteItem);
@@ -237,10 +239,16 @@ public class CategoryController {
         saveClients();
     }
 
-    private void removeClient(Client client) {
+    private void removeClientAndTheirPayments(Client client) {
+        category.getPayments()
+                .stream()
+                .filter(p -> p.getClientId() == client.getId())
+                .collect(Collectors.toList())
+                .forEach(p -> category.removePayment(p));
         category.removeClient(client);
         updateTable();
         saveClients();
+        savePayments();
     }
 
     private void addPayment(Payment payment) {

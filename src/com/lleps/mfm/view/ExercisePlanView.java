@@ -38,7 +38,6 @@ public class ExercisePlanView extends JDialog {
     private String[] columns = { "Ejercicio", "Series", "Repeticiones", "Pausa" };
     private Client client;
 
-    // TODO dejar 4 columnas nada mas
     public ExercisePlanView(Category category, Client client, ExercisePlan plan) {
         this.category = category;
         this.client = client;

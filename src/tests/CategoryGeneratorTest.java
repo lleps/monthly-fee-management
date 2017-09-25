@@ -21,7 +21,7 @@ public class CategoryGeneratorTest {
         new CategoryGeneratorTest();
     }
 
-    CategoryGeneratorTest() {
+    private CategoryGeneratorTest() {
         String categoriess[] = {"Yoga", "Máquinas", "MMA", "Pilates"};
         for (String category : categoriess) {
             Category category1 = new Category(category, 300, getRandomClients(RAND_CLIENT_COUNT),
@@ -36,8 +36,8 @@ public class CategoryGeneratorTest {
         Main.main(new String[]{});
     }
 
-    int RAND_CLIENT_COUNT = 300;
-    int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
+    private int RAND_CLIENT_COUNT = 300;
+    private int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
 
     private LocalDate getRandomDate() {
         return LocalDate.of(randomInt(2015, 2018), randomInt(1, 13), randomInt(1, 28));
@@ -102,7 +102,7 @@ public class CategoryGeneratorTest {
         List<ExercisePlan> result = new ArrayList<>();
         int planCount = RandomUtils.nextInt(0, 4);
         String[] planNames = { "pecho", "piernas", "basico", "avanzado", "inicial", "hombros", "volumen", "resistencia"};
-        String[][] exercises = new String[25][4];
+        String[][] exercises = new String[36][4];
         int exerciseCount = RandomUtils.nextInt(0, 20);
         String[] exerciseName = { "mancuerna", "hombro", "pecho", "bici", "biceps", "triceps", "espalda", "disco", "spinning"};
         String[] series = { "2", "3", "4" };
