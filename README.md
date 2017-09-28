@@ -14,5 +14,5 @@ Hecho con Java swing. Guardado y cargado con la serialización estándar.
 
 
 - [x] agregar a la sugerencia de nombre del plan, el nombre del cliente
-- [ ] Agregar la entrada en calor
-- [ ] Agregar un sistema para prototipo de planes
+- [x] Agregar un sistema para prototipo de planes
+- [ ] llenar los array de prototipos con planes necesarios

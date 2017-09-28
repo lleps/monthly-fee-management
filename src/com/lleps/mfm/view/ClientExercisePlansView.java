@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientExercisePlansView extends JDialog {
     private JPanel contentPane;
@@ -57,23 +58,19 @@ public class ClientExercisePlansView extends JDialog {
         }
 
         addPlanButton.addActionListener(e -> {
-            String planName = (String) JOptionPane.showInputDialog(this,
-                    "Escribe el nombre del plan",
-                    "Crear nuevo plan",
-                    JOptionPane.PLAIN_MESSAGE,
-                    Resources.getInstance().PLUS_ICON, null,
-                    "Nuevo plan");
+            if (client.getExercisePlans().size() >= plans.length) {
+                JOptionPane.showMessageDialog(this, "Puede crear máximo " + plans.length + " planes. Borre alguno.");
+                return;
+            }
 
-            if (planName != null) {
-                String[][] exercises = new String[36][4];
-                for (int i = 0; i < exercises.length; i++) {
-                    for (int j = 0; j < exercises[i].length; j++) {
-                        exercises[i][j] = "";
-                    }
-                }
+            AddPlanDialog dialog = new AddPlanDialog();
+            dialog.setLocationRelativeTo(this);
+            dialog.setVisible(true);
 
+            Optional<ExercisePlan> exercisePlan = dialog.getExercisePlan();
+            exercisePlan.ifPresent(plan -> {
                 List<ExercisePlan> plans = new ArrayList<>(client.getExercisePlans());
-                plans.add(new ExercisePlan(planName, LocalDate.now(), exercises));
+                plans.add(plan);
                 client.setExercisePlans(plans);
                 try {
                     Storage.getInstance().saveCategoryClients(category);
@@ -81,7 +78,7 @@ public class ClientExercisePlansView extends JDialog {
                     Utils.reportException(e1, "error saving category");
                 }
                 updatePlanButtonsVisibility();
-            }
+            });
         });
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
