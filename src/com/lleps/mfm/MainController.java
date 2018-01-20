@@ -75,7 +75,7 @@ public class MainController {
                 try {
                     Category category = new Category(newCategoryName,
                             0,
-                            new ArrayList<>(), new ArrayList<>());
+                            new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
                     Storage.getInstance().saveCategory(category);
                     addCategory(category);

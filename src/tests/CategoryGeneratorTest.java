@@ -25,7 +25,7 @@ public class CategoryGeneratorTest {
         String categoriess[] = {"Yoga", "Máquinas", "MMA", "Pilates"};
         for (String category : categoriess) {
             Category category1 = new Category(category, 300, getRandomClients(RAND_CLIENT_COUNT),
-                    getRandomPayments(RAND_PAYMENT_COUNT));
+                    getRandomPayments(RAND_PAYMENT_COUNT), new ArrayList<>());
             System.out.println("Category " + category + " added.");
             try {
                 Storage.getInstance().saveCategory(category1);

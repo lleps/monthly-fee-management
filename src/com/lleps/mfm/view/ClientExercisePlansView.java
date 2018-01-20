@@ -63,7 +63,7 @@ public class ClientExercisePlansView extends JDialog {
                 return;
             }
 
-            AddPlanDialog dialog = new AddPlanDialog();
+            AddPlanDialog dialog = new AddPlanDialog(category);
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 

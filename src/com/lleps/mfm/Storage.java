@@ -3,6 +3,7 @@ package com.lleps.mfm;
 import com.alee.utils.FileUtils;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
+import com.lleps.mfm.model.ExercisePlan;
 import com.lleps.mfm.model.Payment;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -33,6 +34,7 @@ public class Storage {
     private final static String CONFIG_FILENAME = "config.properties";
     private final static String CLIENTS_FILENAME = "clients.list";
     private final static String PAYMENTS_FILENAME = "payments.list";
+    private final static String PLANS_FILENAME = "plans.list";
 
     private final File userFolder;
     private final File mainFolder;
@@ -96,11 +98,13 @@ public class Storage {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     private static Category loadCategoryFromFolder(File folder) throws IOException, ClassNotFoundException {
         String name;
         int monthPrice;
         List<Client> clients;
         List<Payment> payments;
+        List<ExercisePlan> plans;
 
         name = folder.getName();
 
@@ -119,7 +123,12 @@ public class Storage {
         try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(new File(folder, PAYMENTS_FILENAME)))) {
             payments = (List) input.readObject();
         }
-        return new Category(name, monthPrice, clients, payments);
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(new File(folder, PLANS_FILENAME)))) {
+            plans = (List) input.readObject();
+        } catch (IOException e) { // Older versions don't have this file
+            plans = new ArrayList<>();
+        }
+        return new Category(name, monthPrice, clients, payments, plans);
     }
 
     public void saveCategory(Category category) throws IOException {
@@ -144,7 +153,7 @@ public class Storage {
         saveCategoryClients(category, getCategoryFile(category, CLIENTS_FILENAME));
     }
 
-    public void saveCategoryClients(Category category, File file) throws IOException {
+    private void saveCategoryClients(Category category, File file) throws IOException {
         try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
             output.writeObject(category.getClients());
         }
@@ -154,9 +163,19 @@ public class Storage {
         saveCategoryPayments(category, getCategoryFile(category, PAYMENTS_FILENAME));
     }
 
-    public void saveCategoryPayments(Category category, File file) throws IOException {
+    private void saveCategoryPayments(Category category, File file) throws IOException {
         try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
             output.writeObject(category.getPayments());
+        }
+    }
+
+    public void saveCategoryPlans(Category category) throws IOException {
+        saveCategoryPlans(category, getCategoryFile(category, PLANS_FILENAME));
+    }
+
+    private void saveCategoryPlans(Category category, File file) throws IOException {
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
+            output.writeObject(category.getPlans());
         }
     }
 

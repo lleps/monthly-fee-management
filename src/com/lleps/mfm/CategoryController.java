@@ -49,6 +49,11 @@ public class CategoryController {
             }
         });
         view.setRecaudationsListener(e -> showRecaudations());
+        view.setPlansListener(e -> {
+            CategoryPlansView plansView = new CategoryPlansView(category);
+            plansView.setLocationRelativeTo(view);
+            plansView.setVisible(true);
+        });
         view.getTable().update(category.getClients(), category.getPayments());
     }
 

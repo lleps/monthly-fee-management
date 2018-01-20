@@ -21,12 +21,14 @@ public class CategoryView extends JPanel {
     private JPanel pane;
     private JButton recaudationsButton;
     private JTextField monthMoneyField;
+    private JButton plansButton;
     private JButton deleteButton;
 
     private ActionListener showInactivesListener;
     private KeyAdapter browseStringChangeListener;
     private ActionListener addClientListener;
     private ActionListener recaudationsListener;
+    private ActionListener plansListener;
     private ActionListener monthMoneyChangeListener;
 
     private String name;
@@ -51,6 +53,9 @@ public class CategoryView extends JPanel {
         });
         recaudationsButton.addActionListener(e -> {
             if (recaudationsListener != null) recaudationsListener.actionPerformed(e);
+        });
+        plansButton.addActionListener(e -> {
+            plansListener.actionPerformed(e);
         });
         monthMoneyField.addFocusListener(new FocusListener() {
             @Override
@@ -99,6 +104,7 @@ public class CategoryView extends JPanel {
 
         addClientButton = new WebButton(Resources.getInstance().ADDUSER_ICON);
         recaudationsButton = new WebButton(Resources.getInstance().GRAPHIC_ICON);
+        plansButton = new WebButton(Resources.getInstance().PENCIL_ICON);
         deleteButton = new WebButton(Resources.getInstance().TRASH_ICON);
 
         monthMoneyField = new WebTextField(5);
@@ -149,6 +155,10 @@ public class CategoryView extends JPanel {
 
     public void setRecaudationsListener(ActionListener recaudationsListener) {
         this.recaudationsListener = recaudationsListener;
+    }
+
+    public void setPlansListener(ActionListener plansListener) {
+        this.plansListener = plansListener;
     }
 
     public String getBrowseString() {
