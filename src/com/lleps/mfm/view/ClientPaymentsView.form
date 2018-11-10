@@ -126,7 +126,7 @@
                   <component id="da0bb" class="javax.swing.JTextField" binding="amountField" custom-create="true">
                     <constraints border-constraint="Center"/>
                     <properties>
-                      <editable value="false"/>
+                      <editable value="true"/>
                       <enabled value="true"/>
                       <text value=""/>
                     </properties>
