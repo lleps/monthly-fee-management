@@ -63,11 +63,11 @@ public class CategoryController {
         updateCategoryPaymentsView(categoryPaymentsView);
         categoryPaymentsView.setExtendedState(JFrame.MAXIMIZED_BOTH);
         categoryPaymentsView.setNextListener(e -> {
-            currentRecaudationsMonth = currentRecaudationsMonth.plusMonths(categoryPaymentsView.getMonthCount());
+            currentRecaudationsMonth = currentRecaudationsMonth.plusDays(categoryPaymentsView.getMonthCount());
             updateCategoryPaymentsView(categoryPaymentsView);
         });
         categoryPaymentsView.setPreviousListener(e -> {
-            currentRecaudationsMonth = currentRecaudationsMonth.minusMonths(categoryPaymentsView.getMonthCount());
+            currentRecaudationsMonth = currentRecaudationsMonth.minusDays(categoryPaymentsView.getMonthCount());
             updateCategoryPaymentsView(categoryPaymentsView);
         });
         categoryPaymentsView.setTitle("Pagos de " + category.getName());
@@ -77,7 +77,7 @@ public class CategoryController {
 
     private void updateCategoryPaymentsView(CategoryPaymentsView categoryPaymentsView) {
         for (int i = 0; i < categoryPaymentsView.getMonthCount(); i++) {
-            setPaymentsViewMonth(categoryPaymentsView, i, currentRecaudationsMonth.minusMonths(i));
+            setPaymentsViewMonth(categoryPaymentsView, i, currentRecaudationsMonth.minusDays(i));
         }
     }
 

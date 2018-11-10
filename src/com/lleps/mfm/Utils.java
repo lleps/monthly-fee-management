@@ -28,6 +28,10 @@ public class Utils {
                 + " del " + date.getYear();
     }
 
+    public static String getDayWithMonth(LocalDate date) {
+        return date.getDayOfMonth() + " de " + date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+    }
+
     public static String firstUpperCase(String string) {
         if (string.length() <= 1) return string.toUpperCase();
         return Character.toUpperCase(string.charAt(0)) + string.substring(1);

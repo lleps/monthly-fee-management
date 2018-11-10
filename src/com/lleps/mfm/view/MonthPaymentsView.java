@@ -24,11 +24,11 @@ public class MonthPaymentsView extends JPanel {
     }
 
     public void setMonth(LocalDate month) {
-        monthLabel.setText(Utils.firstUpperCase(Utils.getMonthWithYear(month)));
+        monthLabel.setText(Utils.firstUpperCase(Utils.getDayWithMonth(month)));
     }
 
     public void setPayments(List<Payment> payments) {
-        String header[] = {"#Cliente", "Monto", "Mes correspondiente"};
+        String header[] = {"#Cliente", "Monto", "Fecha"};
         Object[][] data = new Object[payments.size()][header.length];
         int i = 0, moneyCount = 0;
         for (Payment payment : payments) {

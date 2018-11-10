@@ -32,20 +32,20 @@
             <border type="none"/>
             <children/>
           </grid>
-          <component id="d9a15" class="javax.swing.JButton" binding="previousButton">
+          <component id="d9a15" class="javax.swing.JButton" binding="theNextButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Anterior"/>
+              <text value="Siguiente"/>
             </properties>
           </component>
-          <component id="6fece" class="javax.swing.JButton" binding="nextButton">
+          <component id="6fece" class="javax.swing.JButton" binding="thePrevButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Siguiente"/>
+              <text value="Anterior"/>
             </properties>
           </component>
         </children>

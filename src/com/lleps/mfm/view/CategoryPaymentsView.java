@@ -14,13 +14,13 @@ public class CategoryPaymentsView extends JFrame {
     private JPanel panel2;
     private JPanel panel3;
     private JPanel mainPanel;
-    private JButton previousButton;
-    private JButton nextButton;
+    private JButton theNextButton;
+    private JButton thePrevButton;
 
     private ActionListener nextListener;
     private ActionListener previousListener;
 
-    private JPanel panels[] = {panel0, panel1, panel2, panel3};
+    private JPanel panels[] = {panel3, panel2, panel1, panel0};
     private MonthPaymentsView[] paymentViews = new MonthPaymentsView[panels.length];
 
     private int getPanelCount() {
@@ -39,15 +39,15 @@ public class CategoryPaymentsView extends JFrame {
             getPanelByIndex(i).add(paymentViews[i]);
         }
 
-        nextButton.addActionListener(e -> {
-            if (nextListener != null) {
-                nextListener.actionPerformed(e);
+        thePrevButton.addActionListener(e -> {
+            if (previousListener != null) {
+                previousListener.actionPerformed(e);
             }
         });
 
-        previousButton.addActionListener(e -> {
-            if (previousListener != null) {
-                previousListener.actionPerformed(e);
+        theNextButton.addActionListener(e -> {
+            if (nextListener != null) {
+                nextListener.actionPerformed(e);
             }
         });
     }
