@@ -1,5 +1,6 @@
 package com.lleps.mfm.view;
 
+import com.alee.extended.date.WebDateField;
 import com.alee.laf.text.WebTextField;
 import com.lleps.mfm.model.Payment;
 import com.lleps.mfm.Resources;
@@ -9,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +24,10 @@ public class ClientPaymentsView extends JDialog {
     private JLabel previousPaymentsLabel;
     private JTextArea observationsField;
     private JLabel lastPaymentsLabel;
+    private JPanel datePanel;
     private ActionListener acceptButtonListener;
     private ActionListener cancelButtonListener;
+    private WebDateField dateField;
 
     public ClientPaymentsView() {
         setContentPane(contentPane);
@@ -40,7 +45,7 @@ public class ClientPaymentsView extends JDialog {
                 cancelButtonListener.actionPerformed(e);
             }
         });
-        setSize(new Dimension(400, 450));
+        setSize(new Dimension(450, 450));
     }
 
     public void setAcceptButtonListener(ActionListener acceptButtonListener) {
@@ -106,9 +111,18 @@ public class ClientPaymentsView extends JDialog {
         return ((DateItem)monthsComboBox.getSelectedItem()).date;
     }
 
+    public LocalDate getSelectedDate() {
+        Date input = dateField.getDate();
+        return input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
     private void createUIComponents() {
         amountField = new WebTextField();
         ((WebTextField)amountField).setLeadingComponent(new JLabel(Resources.getInstance().DOLLAR_ICON));
+        datePanel = new JPanel();
+        dateField = new WebDateField();
+        dateField.setDate(new Date());
+        datePanel.add(dateField);
     }
 
     private class DateItem {

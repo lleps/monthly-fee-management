@@ -189,7 +189,7 @@ public class CategoryController {
         paymentsView.setAcceptButtonListener(e -> {
             int priceToPay = paymentsView.getAmountField().orElse(category.getMonthPrice());
             Payment payment = new Payment(client.getId(), priceToPay,
-                    paymentsView.getSelectedMonth(), LocalDate.now());
+                    paymentsView.getSelectedMonth(), paymentsView.getSelectedDate());
             if (!client.getObservations().equals(paymentsView.getObservations())) {
                 client.setObservations(paymentsView.getObservations());
                 saveClients();
