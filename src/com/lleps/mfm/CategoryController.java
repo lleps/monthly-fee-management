@@ -223,7 +223,21 @@ public class CategoryController {
         ClientEditView clientView = new ClientEditView();
         clientView.setTitle("Agregar cliente");
         clientView.setAcceptButtonListener(e -> {
-            Client client = new Client(getFreeClientId(), clientView.isMaleSelected(), clientView.getNameField(),
+            int dni = 0;
+            try {
+                dni = Integer.parseInt(clientView.getDniField());
+            } catch (Exception exception) { /**/ }
+
+            if (dni == 0) {
+                JOptionPane.showMessageDialog(view, "El DNI escrito no es válido.", "DNI Inválido", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int finalDni = dni;
+            if (category.getClients().stream().anyMatch(c -> c.getDni() == finalDni)) {
+                JOptionPane.showMessageDialog(view, "El DNI escrito ya está registrado.", "DNI en uso", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Client client = new Client(getFreeClientId(), clientView.isMaleSelected(), dni, clientView.getNameField(),
                     clientView.getLastNameField(), clientView.getPhoneNumberField(), clientView.getHomeAddressField(),
                     clientView.getMailField(), LocalDate.now(), clientView.getObservationsField(), new ArrayList<>());
             clientView.dispose();

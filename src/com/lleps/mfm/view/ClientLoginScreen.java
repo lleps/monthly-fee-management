@@ -1,6 +1,9 @@
 package com.lleps.mfm.view;
 
 import com.lleps.mfm.Utils;
+import com.lleps.mfm.model.Category;
+import com.lleps.mfm.model.Client;
+import com.lleps.mfm.model.Payment;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -9,6 +12,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 public class ClientLoginScreen {
@@ -63,21 +70,61 @@ public class ClientLoginScreen {
     // TODO: some way to stop the timer
 
     private void onEnterId(int id) {
+        Integer daysToExpire = checkDaysForDniExpiry(id);
         System.out.println("id: " + id);
-        if (Math.random() < 0.5f) {
+        if (daysToExpire == null) {
             setColorWithTransition(rootPanel, ERROR_BACKGROUND, 0.5f);
-            titleLabel.setText("Tu cuota está vencida.");
+            titleLabel.setText("El DNI " + id + " no está registrado.");
+            Timer t = new Timer(500, (e) -> playSound("error"));
+            t.setRepeats(false);
+            t.start();
+        } else if (daysToExpire < 0) {
+            setColorWithTransition(rootPanel, ERROR_BACKGROUND, 0.5f);
+            titleLabel.setText("Tu cuota venció hace " + daysToExpire + " dias.");
             Timer t = new Timer(500, (e) -> playSound("error"));
             t.setRepeats(false);
             t.start();
         } else {
             setColorWithTransition(rootPanel, SUCCESS_BACKGROUND, 0.5f);
             playSound("success");
-            titleLabel.setText("Tu cuota vence en 5 días.");
+            titleLabel.setText("Tu cuota vence en " + daysToExpire + " días.");
         }
-        colorRedExpiry = System.currentTimeMillis() + 5000;
+        colorRedExpiry = System.currentTimeMillis() + 3500;
     }
 
+    private ArrayList<Category> categoryList;
+
+    public void setCategoryList(ArrayList<Category> categoryList) {
+        this.categoryList = categoryList;
+    }
+
+    private Integer checkDaysForDniExpiry(int dni) {
+        Payment lastPayment = null;
+        for (Category category : categoryList) {
+            Optional<Client> client = category
+                    .getClients()
+                    .stream()
+                    .filter(theClient -> theClient.getDni() == dni)
+                    .findFirst();
+
+            if (!client.isPresent()) continue; // doesn't exists in this category
+            int clientId = client.get().getId();
+            Optional<Payment> categoryLastPayment = category.getPayments()
+                    .stream()
+                    .filter(payment -> payment.getClientId() == clientId)
+                    .max((p1, p2) -> (int)(p1.getMonthDate().toEpochDay() - p2.getMonthDate().toEpochDay()));
+            if (!categoryLastPayment.isPresent()) continue;
+            Payment categoryPayment = categoryLastPayment.get();
+            if (lastPayment == null || (categoryPayment.getMonthDate().toEpochDay() > lastPayment.getMonthDate().toEpochDay())) {
+                lastPayment = categoryPayment;
+            }
+        }
+        if (lastPayment == null) return null;
+        LocalDate expiry = lastPayment.getMonthDate().plusMonths(1);
+        LocalDate now = LocalDate.now();
+        return (int) (expiry.toEpochDay() - now.toEpochDay());
+    }
+    
     void reportKeyTyped(KeyEvent e) {
         char c = e.getKeyChar();
         if (Character.isDigit(c)) {

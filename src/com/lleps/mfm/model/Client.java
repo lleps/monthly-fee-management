@@ -14,6 +14,7 @@ public class Client implements Serializable {
 
     private int id;
     private boolean male;
+    private int dni;
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -26,6 +27,7 @@ public class Client implements Serializable {
 
     public Client(int id,
                   boolean male,
+                  int dni,
                   String firstName,
                   String lastName,
                   String phoneNumber,
@@ -35,6 +37,7 @@ public class Client implements Serializable {
                   String observations,
                   List<ExercisePlan> exercisePlans) {
         this.id = id;
+        this.dni = dni;
         this.male = male;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -56,6 +59,14 @@ public class Client implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setDni(int dni) {
+        this.dni = dni;
+    }
+
+    public int getDni() {
+        return dni;
     }
 
     public void setMale(boolean male) {

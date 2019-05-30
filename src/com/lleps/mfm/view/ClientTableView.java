@@ -30,7 +30,7 @@ public class ClientTableView extends JTable {
     private final static int COLUMN_CLIENT = 0;
     private final static int COLUMN_FIRSTNAME = 1;
     private final static int COLUMN_LASTNAME = 2;
-    private final static int COLUMN_PHONENUMBER = 3;
+    private final static int COLUMN_DNI = 3;
     private final static int COLUMN_INSCRIPTIONDATE = 4;
     private final static int COLUMN_HOMEADDRESS = 5;
     private final static int COLUMN_MAIL = 6;
@@ -132,7 +132,7 @@ public class ClientTableView extends JTable {
                 "#Cliente",
                 "Nombre",
                 "Apellido",
-                "Celular",
+                "DNI",
                 "Inscripción",
                 "Domicilio",
                 "Correo electrónico",
@@ -157,7 +157,7 @@ public class ClientTableView extends JTable {
             data[i][COLUMN_CLIENT] = client;
             data[i][COLUMN_FIRSTNAME] = client.getFirstName();
             data[i][COLUMN_LASTNAME] = client.getLastName();
-            data[i][COLUMN_PHONENUMBER] = client.getPhoneNumber();
+            data[i][COLUMN_DNI] = client.getDni();
             data[i][COLUMN_INSCRIPTIONDATE] = client.getInscriptionDate().format(Utils.DATE_FORMATTER);
             data[i][COLUMN_HOMEADDRESS] = client.getHomeAddress();
             data[i][COLUMN_MAIL] = client.getMail();
@@ -202,9 +202,10 @@ public class ClientTableView extends JTable {
     }
 
     private Optional<Payment> getClientLastPayment(Client client, Map<Integer, List<Payment>> paymentsById) {
-        return paymentsById.getOrDefault(client.getId(), new ArrayList<>()).stream()
-                .sorted((p1, p2) -> (int) (p2.getMonthDate().toEpochDay() - p1.getMonthDate().toEpochDay()))
-                .findFirst();
+        return paymentsById
+                .getOrDefault(client.getId(), new ArrayList<>())
+                .stream()
+                .min((p1, p2) -> (int) (p2.getMonthDate().toEpochDay() - p1.getMonthDate().toEpochDay()));
     }
 
     private String readablePeriod(Period period) {

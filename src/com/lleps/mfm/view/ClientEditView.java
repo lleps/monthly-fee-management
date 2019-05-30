@@ -19,6 +19,7 @@ public class ClientEditView extends JDialog {
     private JRadioButton maleRadioButton;
     private JRadioButton femaleRadioButton;
     private JTextField mailField;
+    private JTextField dniField;
     private ActionListener acceptButtonListener;
     private ActionListener cancelButtonListener;
 
@@ -75,6 +76,15 @@ public class ClientEditView extends JDialog {
         return phoneNumberField.getText();
     }
 
+    public void setDniField(String content) {
+        dniField.setText(content);
+        updateOKButton();
+    }
+
+    public String getDniField() {
+        return dniField.getText();
+    }
+
     public void setHomeAddressField(String content) {
         homeAddressField.setText(content);
         updateOKButton();
@@ -127,6 +137,11 @@ public class ClientEditView extends JDialog {
         ((WebTextField)phoneNumberField).setHideInputPromptOnFocus(false);
         ((WebTextField)phoneNumberField).setLeadingComponent(new JLabel(Resources.getInstance().PHONE_ICON));
 
+        dniField = new WebTextField();
+        ((WebTextField)dniField).setInputPrompt("DNI");
+        ((WebTextField)dniField).setHideInputPromptOnFocus(false);
+        ((WebTextField)dniField).setLeadingComponent(new JLabel(Resources.getInstance().PENCIL_ICON));
+
         homeAddressField = new WebTextField();
         ((WebTextField)homeAddressField).setInputPrompt("Domicilio");
         ((WebTextField)homeAddressField).setHideInputPromptOnFocus(false);
@@ -159,6 +174,12 @@ public class ClientEditView extends JDialog {
             }
         });
 
+        dniField.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                updateOKButton();
+            }
+        });
+
         homeAddressField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 updateOKButton();
@@ -176,7 +197,7 @@ public class ClientEditView extends JDialog {
         return nameField.getText().isEmpty()
                 || lastNameField.getText().isEmpty()
                 || phoneNumberField.getText().isEmpty()
-                || homeAddressField.getText().isEmpty()
+                || dniField.getText().isEmpty()
                 || mailField.getText().isEmpty();
     }
 
