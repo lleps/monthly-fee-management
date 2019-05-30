@@ -14,7 +14,6 @@ import java.awt.event.KeyListener;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -80,7 +79,7 @@ public class ClientLoginScreen {
             t.start();
         } else if (daysToExpire < 0) {
             setColorWithTransition(rootPanel, ERROR_BACKGROUND, 0.5f);
-            titleLabel.setText("Tu cuota venció hace " + daysToExpire + " dias.");
+            titleLabel.setText("Tu cuota venció hace " + -daysToExpire + " dias.");
             Timer t = new Timer(500, (e) -> playSound("error"));
             t.setRepeats(false);
             t.start();
@@ -124,7 +123,7 @@ public class ClientLoginScreen {
         LocalDate now = LocalDate.now();
         return (int) (expiry.toEpochDay() - now.toEpochDay());
     }
-    
+
     void reportKeyTyped(KeyEvent e) {
         char c = e.getKeyChar();
         if (Character.isDigit(c)) {
@@ -211,31 +210,65 @@ public class ClientLoginScreen {
         rootPanel.repaint();
     }
 
-    public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame();
-        ClientLoginScreen screen = new ClientLoginScreen();
-        frame.setContentPane(screen.rootPanel);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true);
-        frame.setVisible(true);
-        frame.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                screen.reportKeyTyped(e);
-            }
+    // Implemented statically to avoid passing too many dependencies, since this is a
+    // whole frame and not just a pane.
+    // Caller should call initLoginScreen and toggle. Everything else
+    // is done here (i.e view cancellation is done here)
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                screen.reportKeyPressed(e); // enter and delete are not detected in keyTyped.
-            }
+    private static JFrame frame;
+    private static ClientLoginScreen screen;
+    private static long lastSwitch = 0L;
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-        });
+    public static boolean checkSwitch() {
+        if (System.currentTimeMillis() - lastSwitch > 250) {
+            lastSwitch = System.currentTimeMillis();
+            return true;
+        }
+        return false;
     }
 
-    private void playSound(String sound) {
+    public static boolean isVisible() {
+        return frame != null && frame.isVisible();
+    }
+
+    public static void initLoginScreen(java.util.List<Category> categoryList) {
+        screen = new ClientLoginScreen();
+        screen.setCategoryList(new ArrayList<>(categoryList));
+    }
+
+    public static void toggle(boolean toggle) {
+        if (frame == null) {
+            frame = new JFrame();
+            frame.setContentPane(screen.rootPanel);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setUndecorated(true);
+            frame.setFocusable(true);
+            frame.setAlwaysOnTop(true);
+            frame.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    screen.reportKeyTyped(e);
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    screen.reportKeyPressed(e); // enter and delete are not detected in keyTyped.
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                }
+            });
+        }
+        frame.setVisible(toggle);
+    }
+
+    public static void main(String[] args) throws IOException {
+        initLoginScreen(new ArrayList<>());
+        toggle(true);
+    }
+
+    private static void playSound(String sound) {
         new Thread(() -> {
             try {
                 AudioStream audio = new AudioStream(ClientLoginScreen.class.getResourceAsStream("/resources/" + sound + ".wav"));

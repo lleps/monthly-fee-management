@@ -1,11 +1,15 @@
 package com.lleps.mfm;
 
+import com.lleps.mfm.model.Client;
+import com.lleps.mfm.view.ClientLoginScreen;
 import com.lleps.mfm.view.FloatingMessageView;
 import com.lleps.mfm.view.MainView;
 import com.lleps.mfm.model.Category;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -20,6 +24,8 @@ public class MainController {
     List<CategoryController> categoryControllers = new ArrayList<>();
 
     MainController(List<Category> categories) {
+        ClientLoginScreen.initLoginScreen(categories);
+
         view = new MainView();
         view.setTitle("Gestión de cuotas de clientes");
         view.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -39,7 +45,6 @@ public class MainController {
         });
         view.setExtendedState(view.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         view.setVisible(true);
-
         categories.forEach(this::addCategory);
 
         view.setNewCategoryButtonListener(e -> {
