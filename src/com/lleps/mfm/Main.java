@@ -11,6 +11,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Leandro B. on 31/10/2015.
@@ -25,6 +27,9 @@ public class Main {
             FloatingMessageView.hide();
 
             // Init login screen switching
+            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+            logger.setLevel(Level.OFF);
+            logger.setUseParentHandlers(false);
             try {
                 GlobalScreen.registerNativeHook();
             } catch (NativeHookException e) { /* */ }
@@ -32,13 +37,10 @@ public class Main {
             ClientLoginScreen.initLoginScreen(categories);
             GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
                 @Override
-                public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
-                }
+                public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) { }
 
                 @Override
                 public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-                    System.out.println("alo? " + nativeKeyEvent.getKeyCode());
                     if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
                         SwingUtilities.invokeLater(() -> {
                             if (ClientLoginScreen.checkSwitch()) {
@@ -49,9 +51,7 @@ public class Main {
                 }
 
                 @Override
-                public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-
-                }
+                public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) { }
             });
             new MainController(categories);
         });
