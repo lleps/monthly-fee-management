@@ -164,8 +164,9 @@ public class ClientTableView extends JTable {
 
             String finalString = "Nunca";
             Optional<Payment> lastPayment = getClientLastPayment(client, paymentsByIds);
+
             if (lastPayment.isPresent()) {
-                LocalDate nextMonthToPay = lastPayment.get().getMonthDate().plusMonths(1);
+                LocalDate nextMonthToPay = lastPayment.get().getEmitDate().plusMonths(1);
                 Period periodBetweenNowAndNextMonthToPay = Period.between(LocalDate.now(), nextMonthToPay);
                 finalString = readablePeriod(periodBetweenNowAndNextMonthToPay);
             }

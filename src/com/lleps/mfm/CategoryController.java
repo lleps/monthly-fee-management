@@ -201,6 +201,7 @@ public class CategoryController {
 
             paymentsView.dispose();
             addPayment(payment);
+            System.out.println("add new payment: " + payment);
         });
 
         paymentsView.setCancelButtonListener(e -> paymentsView.dispose());
