@@ -171,7 +171,11 @@ public class CategoryController {
         int monthsExtents = 4;
         List<LocalDate> selectableMonths = getPreviousMonthsSince(LocalDate.now().plusMonths(monthsExtents), monthsExtents * 2);
         Optional<Payment> lastPaymentOpt = getClientLastPayment(client);
-        LocalDate preselectedDate = LocalDate.now().withDayOfMonth(client.getInscriptionDate().getDayOfMonth());
+
+        int dayOfMonth = client.getInscriptionDate().getDayOfMonth();
+        dayOfMonth = Math.min(28, dayOfMonth); // truncate to 28
+
+        LocalDate preselectedDate = LocalDate.now().withDayOfMonth(dayOfMonth);
         if (lastPaymentOpt.isPresent()) {
             LocalDate lastPaymentDate = lastPaymentOpt.get().getMonthDate();
             selectableMonths = selectableMonths.stream()
@@ -218,6 +222,8 @@ public class CategoryController {
         }
         return result;
     }
+
+
 
     private void showAddClientDialog() {
         ClientEditView clientView = new ClientEditView();
