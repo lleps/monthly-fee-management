@@ -2,6 +2,7 @@ package com.lleps.mfm.view;
 
 import com.alee.laf.button.WebButton;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.lleps.mfm.Resources;
@@ -10,7 +11,6 @@ import com.lleps.mfm.Utils;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
 import com.lleps.mfm.model.ExercisePlan;
-import com.sun.istack.internal.Nullable;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -21,14 +21,13 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.html.Option;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -40,14 +39,15 @@ import java.util.Properties;
  * Otherwise, will be interpreted as "category plans" and saved there.
  */
 public class ExercisePlanView extends JDialog {
+    private static final String[] columns = { "Ejercicio", "Series", "Repeticiones" };
+    private static final int rows = 40;
+
     private JPanel contentPane;
     private JButton sendEmailButton;
     private JButton deletePlanButton;
     private JTable exercises;
     private JButton savePDFButton;
     private ExercisePlan plan;
-    private String[] columns = { "Ejercicio", "Series", "Repeticiones", "Pausa" };
-
     private Category category;
     private Client client;
 
@@ -56,6 +56,7 @@ public class ExercisePlanView extends JDialog {
         this.client = client;
         this.plan = plan;
 
+        reshapeExercisePlan(plan, rows, columns.length);
         setIconImage(Resources.getInstance().APP_IMAGE);
         setContentPane(contentPane);
         setModal(true);
@@ -82,18 +83,51 @@ public class ExercisePlanView extends JDialog {
         });
 
         exercises.setModel(new DefaultTableModel(plan.getExercises().clone(), columns));
+
+        // make col 0 always 50% of width
+        SwingUtilities.invokeLater(() -> {
+            if (columns.length > 1) {
+                int halfWidth = exercises.getWidth() / 2;
+                exercises.getColumnModel().getColumn(0).setPreferredWidth(halfWidth);
+                for (int i = 1; i < columns.length; i++) {
+                    exercises.getColumnModel().getColumn(i).setPreferredWidth(halfWidth / (columns.length - 1));
+                }
+            }
+        });
+
         exercises.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         if (client != null) {
             savePDFButton.addActionListener(e -> {
                 Utils.doUsingNativeLAF(() -> {
                     JFileChooser chooser = new JFileChooser();
                     chooser.setCurrentDirectory(new File("."));
+                    chooser.setFileFilter(new FileFilter() {
+                        public String getDescription() {
+                            return "Archivos PDF (*.pdf)";
+                        }
+
+                        public boolean accept(File f) {
+                            if (f.isDirectory()) {
+                                return true;
+                            } else {
+                                String filename = f.getName().toLowerCase();
+                                return filename.endsWith(".pdf");
+                            }
+                        }
+                    });
                     chooser.setSelectedFile(new File(plan.getName() + "-" + client.getFirstName() + "-" + client.getLastName() + ".pdf"));
                     int option = chooser.showSaveDialog(this);
                     if (option == JFileChooser.APPROVE_OPTION) {
                         try {
-                            Files.write(chooser.getSelectedFile().toPath(), createExercisesPlanPDF());
-                            FloatingMessageView.show("Guardando...");
+                            String professor = JOptionPane.showInputDialog(
+                                    this,
+                                    "Profesor que imprime este plan:",
+                                    "Guardar plan",
+                                    JOptionPane.QUESTION_MESSAGE);
+                            if (professor != null) {
+                                Files.write(chooser.getSelectedFile().toPath(), createExercisesPlanPDF(professor));
+                                FloatingMessageView.show("Guardando...");
+                            }
                         } catch (Exception ex) {
                             Utils.reportException(ex, "error exporting file");
                         }
@@ -133,7 +167,7 @@ public class ExercisePlanView extends JDialog {
                     MimeBodyPart textBodyPart = new MimeBodyPart();
                     textBodyPart.setText("Plan " + plan.getName());
 
-                    byte[] bytes = createExercisesPlanPDF();
+                    byte[] bytes = createExercisesPlanPDF("-");
                     DataSource dataSource = new ByteArrayDataSource(bytes, "application/pdf");
                     MimeBodyPart pdfBodyPart = new MimeBodyPart();
                     pdfBodyPart.setDataHandler(new DataHandler(dataSource));
@@ -168,6 +202,20 @@ public class ExercisePlanView extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    private static void reshapeExercisePlan(ExercisePlan plan, int rows, int cols) {
+        String[][] result = new String[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                try {
+                    result[i][j] = plan.getExercises()[i][j];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    result[i][j] = "";
+                }
+            }
+        }
+        plan.setExercises(result);
+    }
+
     private void onCancel() {
         exercises.transferFocusBackward();
 
@@ -198,22 +246,34 @@ public class ExercisePlanView extends JDialog {
         exercises = new JTable();
     }
 
-    private byte[] createExercisesPlanPDF() throws MessagingException, DocumentException, IOException {
+    // TODO: when init. adapt the given to the dimensions. So in all the remaining code
+    //  you can ensure the array is the size you expect and makes everything easier.
+
+    private byte[] createExercisesPlanPDF(String professor) throws DocumentException, IOException {
         Document document = new Document();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         PdfWriter writer = PdfWriter.getInstance(document, stream);
-        writer.setInitialLeading(20f);
+        writer.setInitialLeading(1f);
+
+        // header pic
         document.open();
+        document.bottom(10);
         Image img = Image.getInstance(ClassLoader.getSystemResource("resources/pdfimage.jpg"));
+        img.setAbsolutePosition(document.right() - img.getPlainWidth(), document.top()- img.getPlainHeight()*0.7f);
         document.add(img);
+
         Font defaultFont = FontFactory.getFont("arial", 12, Font.BOLD, BaseColor.BLACK);
 
-        document.add(new Paragraph("Nombre: " + client.getFirstName(), defaultFont));
-        document.add(new Paragraph("Apellido: " + client.getLastName(), defaultFont));
-        document.add(new Paragraph("Observaciones: " + client.getObservations(), defaultFont));
-        document.add(new Paragraph("Ingreso: " + client.getInscriptionDate().format(Utils.DATE_FORMATTER), defaultFont));
-        document.add(new Paragraph(" ")); // space
-        PdfPTable table = new PdfPTable(plan.getExercises()[0].length);
+        // name + professor
+        document.add(new Paragraph("Nombre: " + client.getFirstName() + " " + client.getLastName(), defaultFont));
+        document.add(new Paragraph("Profesor: " + professor, defaultFont));
+        document.add(new Paragraph("Plan: " + plan.getName(), defaultFont));
+        document.add(new Paragraph(" "));
+
+        // table
+        PdfPTable table = new PdfPTable(columns.length);
+        table.setWidthPercentage(90);
+        table.setWidths(new float[] { 5, 2, 2});
         for (String s : columns) {
             table.addCell(new Paragraph(s.toUpperCase(),
                     FontFactory.getFont("arial",
@@ -228,26 +288,6 @@ public class ExercisePlanView extends JDialog {
         }
         document.add(table);
         document.close();
-
-        // Send email
-        FloatingMessageView.show("Enviando...");
-        final String username = "gimnasio653vcp@gmail.com";
-        final String password = "gymgymgym";
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setText("Plan " + plan.getName());
-
         return stream.toByteArray();
     }
 }
