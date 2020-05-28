@@ -2,6 +2,8 @@ package com.lleps.mfm.view;
 
 import com.alee.laf.button.WebButton;
 import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.lleps.mfm.Resources;
@@ -21,8 +23,11 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.html.Option;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -45,13 +50,15 @@ public class ExercisePlanView extends JDialog {
     private JButton deletePlanButton;
     private JTable exercises;
     private JButton savePDFButton;
+    private JScrollPane baseScroll;
     private ExercisePlan plan;
-    private String[] columns = { "Ejercicio", "Series", "Repeticiones", "Pausa" };
 
     private Category category;
     private Client client;
 
     public ExercisePlanView(Category category, Client client, ExercisePlan plan) {
+        super();
+
         this.category = category;
         this.client = client;
         this.plan = plan;
@@ -81,7 +88,7 @@ public class ExercisePlanView extends JDialog {
             }
         });
 
-        exercises.setModel(new DefaultTableModel(plan.getExercises().clone(), columns));
+        exercises.setModel(new DefaultTableModel(plan.getExercises().clone(), ExercisePlan.defaultColumns));
         exercises.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         if (client != null) {
             savePDFButton.addActionListener(e -> {
@@ -166,6 +173,24 @@ public class ExercisePlanView extends JDialog {
             }
         });
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        SwingUtilities.invokeLater(() -> {
+            baseScroll.getColumnHeader().setVisible(false);
+            baseScroll.revalidate();
+        });
+    }
+
+    private class CustomCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+
+            Component rendererComp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+                    row, column);
+
+            if (row == 0) {
+                rendererComp.setFont(new java.awt.Font("Verdana", java.awt.Font.BOLD, 12));
+            }
+            return rendererComp;
+        }
     }
 
     private void onCancel() {
@@ -195,7 +220,15 @@ public class ExercisePlanView extends JDialog {
         deletePlanButton = new WebButton(Resources.getInstance().TRASH_ICON);
         sendEmailButton = new WebButton(Resources.getInstance().MAIL_ICON);
         savePDFButton = new WebButton(Resources.getInstance().PENCIL_ICON);
-        exercises = new JTable();
+        final CustomCellRenderer renderer = new CustomCellRenderer();
+        exercises = new JTable() {
+            @Override
+            public TableCellRenderer getCellRenderer(int row, int column) {
+                // TODO Auto-generated method stub
+                return renderer;
+            }
+        };
+
     }
 
     private byte[] createExercisesPlanPDF() throws MessagingException, DocumentException, IOException {
@@ -208,22 +241,22 @@ public class ExercisePlanView extends JDialog {
         document.add(img);
         Font defaultFont = FontFactory.getFont("arial", 12, Font.BOLD, BaseColor.BLACK);
 
-        document.add(new Paragraph("Nombre: " + client.getFirstName(), defaultFont));
-        document.add(new Paragraph("Apellido: " + client.getLastName(), defaultFont));
+        document.add(new Paragraph("Nombre: " + client.getFirstName() + " " + client.getLastName(), defaultFont));
         document.add(new Paragraph("Observaciones: " + client.getObservations(), defaultFont));
         document.add(new Paragraph("Ingreso: " + client.getInscriptionDate().format(Utils.DATE_FORMATTER), defaultFont));
         document.add(new Paragraph(" ")); // space
         PdfPTable table = new PdfPTable(plan.getExercises()[0].length);
-        for (String s : columns) {
-            table.addCell(new Paragraph(s.toUpperCase(),
-                    FontFactory.getFont("arial",
-                            11,
-                            Font.BOLD,
-                            BaseColor.BLACK)));
-        }
         for (int row = 0; row < exercises.getRowCount(); row++) {
             for (int column = 0; column < exercises.getColumnCount(); column++) {
-                table.addCell(exercises.getValueAt(row, column).toString() + " ");
+                if (row == 0) {
+                    table.addCell(new Paragraph(exercises.getValueAt(row, column).toString(),
+                            FontFactory.getFont("arial",
+                                    13,
+                                    Font.BOLD,
+                                    BaseColor.BLACK)));
+                } else {
+                    table.addCell(exercises.getValueAt(row, column).toString() + " ");
+                }
             }
         }
         document.add(table);

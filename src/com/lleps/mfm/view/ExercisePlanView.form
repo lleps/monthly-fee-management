@@ -65,7 +65,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <scrollpane id="6e903">
+          <scrollpane id="6e903" binding="baseScroll">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>

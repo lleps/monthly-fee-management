@@ -17,6 +17,7 @@ public class MonthPaymentsView extends JPanel {
     private JLabel monthLabel;
     private JLabel moneyLabel;
     private JPanel mainPanel;
+    private int money;
 
     public MonthPaymentsView() {
         super(new BorderLayout());
@@ -40,6 +41,11 @@ public class MonthPaymentsView extends JPanel {
         }
         table.setModel(new DefaultTableModel(data, header));
         moneyLabel.setText(Utils.priceToString(moneyCount));
+        money = moneyCount;
+    }
+
+    public int getMoney() {
+        return money;
     }
 
     private void createUIComponents() {

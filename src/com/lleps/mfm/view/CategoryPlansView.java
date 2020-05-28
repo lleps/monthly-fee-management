@@ -85,7 +85,7 @@ public class CategoryPlansView extends JDialog {
                 Resources.getInstance().PLUS_ICON, null,
                 "nombre del plan...");
         if (newPlanName != null && !newPlanName.isEmpty()) {
-            ExercisePlan plan = new ExercisePlan(newPlanName, LocalDate.now(), getEmptyExercises());
+            ExercisePlan plan = new ExercisePlan(newPlanName, LocalDate.now(), ExercisePlan.getEmptyExercises());
             category.addPlan(plan);
             updateButtonsByPlans();
             try {
@@ -94,16 +94,6 @@ public class CategoryPlansView extends JDialog {
                 Utils.reportException(e, "error saving plans");
             }
         }
-    }
-
-    private String[][] getEmptyExercises() {
-        String[][] emptyExercises = new String[36][4];
-        for (int i = 0; i < emptyExercises.length; i++) {
-            for (int j = 0; j < emptyExercises[i].length; j++) {
-                emptyExercises[i][j] = "";
-            }
-        }
-        return emptyExercises;
     }
 
     private void onCancel() {

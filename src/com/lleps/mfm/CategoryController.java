@@ -137,6 +137,7 @@ public class CategoryController {
         cev.setNameField(client.getFirstName());
         cev.setLastNameField(client.getLastName());
         cev.setHomeAddressField(client.getHomeAddress());
+        cev.setDniField(Integer.toString(client.getDni()));
         cev.setPhoneNumberField(client.getPhoneNumber());
         cev.setMailField(client.getMail());
         cev.setObservationsField(client.getObservations());
@@ -146,6 +147,7 @@ public class CategoryController {
             client.setLastName(cev.getLastNameField());
             client.setHomeAddress(cev.getHomeAddressField());
             client.setPhoneNumber(cev.getPhoneNumberField());
+            client.setDni(Integer.parseInt(cev.getDniField()));
             client.setMail(cev.getMailField());
             client.setObservations(cev.getObservationsField());
             client.setMale(cev.isMaleSelected());

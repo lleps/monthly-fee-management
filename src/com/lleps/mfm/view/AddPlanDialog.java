@@ -52,7 +52,7 @@ public class AddPlanDialog extends JDialog {
 
         prototypeComboBox.removeAllItems();
 
-        prototypeComboBox.addItem(new ComboItem("Vacía", getEmptyExercises()));
+        prototypeComboBox.addItem(new ComboItem("Vacía", ExercisePlan.getEmptyExercises()));
         for (ExercisePlan plan : category.getPlans()) {
             prototypeComboBox.addItem(new ComboItem(plan.getName(), plan.getExercises().clone()));
         }
@@ -92,13 +92,5 @@ public class AddPlanDialog extends JDialog {
         dispose();
     }
 
-    private String[][] getEmptyExercises() {
-        String[][] emptyExercises = new String[36][4];
-        for (int i = 0; i < emptyExercises.length; i++) {
-            for (int j = 0; j < emptyExercises[i].length; j++) {
-                emptyExercises[i][j] = "";
-            }
-        }
-        return emptyExercises;
-    }
+
 }

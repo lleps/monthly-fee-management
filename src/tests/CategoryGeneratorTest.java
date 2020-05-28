@@ -24,8 +24,9 @@ public class CategoryGeneratorTest {
     private CategoryGeneratorTest() {
         String categoriess[] = {"Yoga", "Máquinas", "MMA", "Pilates"};
         for (String category : categoriess) {
-            Category category1 = new Category(category, 300, getRandomClients(RAND_CLIENT_COUNT),
-                    getRandomPayments(RAND_PAYMENT_COUNT), new ArrayList<>());
+            List<Payment> payments = new ArrayList<>();
+            List<Client> clients = getRandomClients(RAND_CLIENT_COUNT, payments);
+            Category category1 = new Category(category, FEE_PRICE, clients, payments, new ArrayList<>());
             System.out.println("Category " + category + " added.");
             try {
                 Storage.getInstance().saveCategory(category1);
@@ -36,11 +37,13 @@ public class CategoryGeneratorTest {
         Main.main(new String[]{});
     }
 
-    private int RAND_CLIENT_COUNT = 300;
+    private int RAND_CLIENT_COUNT = 500;
     private int RAND_PAYMENT_COUNT = RAND_CLIENT_COUNT * 15;
+    private int FEE_PRICE = 750;
+    private LocalDate MAX_DATE = LocalDate.now();
 
     private LocalDate getRandomDate() {
-        return LocalDate.of(randomInt(2015, 2018), randomInt(1, 13), randomInt(1, 28));
+        return LocalDate.of(randomInt(2018, 2021), randomInt(1, 6), randomInt(1, 28));
     }
 
     private int randomInt(int startInclusive, int endExclusive) {
@@ -56,6 +59,26 @@ public class CategoryGeneratorTest {
         return result;
     }
 
+    private Client generateRandomClient(int id, LocalDate inscription, LocalDate max, List<Payment> payments) {
+        // Create client con planes
+        Client client = new Client(id, true, randomInt(20000000, 45000000), getRandomName(), getRandomLastName(), getRandomPhone(),
+                getRandomHomeAddress(), getRandomMail(), getRandomDate(), "", getRandomPlans());
+        if (randomInt(1, 4) == 1) client.setInactive(true);
+
+        // fees
+        int paidFees = randomInt(1, 8);
+        LocalDate d = inscription;
+        for (int i = 0; i < paidFees; i++) {
+            Payment payment = new Payment(id, FEE_PRICE, d, d);
+            payments.add(payment);
+            if (d.isBefore(max)) {
+                d = d.plusMonths(1);
+            } else break;
+        }
+
+        return client;
+    }
+
     private String getRandomName() {
         String names[] = {"Agustin", "Sofia", "Leandro", "Martina", "Daniel", "Tomas", "Lionel", "Gustavo", "Mariano", "Pedro",
                 "Marcelo", "Agustina", "Camila", "Yamila", "Andrea", "Fernanda", "Fernando", "Horacio", "Silvia", "Amanda", "Erica",
@@ -64,8 +87,8 @@ public class CategoryGeneratorTest {
     }
 
     private String getRandomLastName() {
-        String lasts[] = {"Barbero", "Boiero", "Messi", "Macri", "Gonzales", "Perez", "Federer", "Rodriguez", "Koyro",
-                "Navarro", "Acosta", "Acevedo", "Aguilar", "Guerrero"};
+        String lasts[] = {"Buenavera", "Boiero", "Demarco", "Gutierrez", "Gonzales", "Perez", "Hernandes", "Rodriguez", "Korgo",
+                "Navarro", "Acosta", "Acevedo", "Aguilar", "Guerrero", "Oclavo", "Sanchez", "Mendes", "Johnson"};
         return lasts[(int)(Math.random() * lasts.length)];
     }
 
@@ -83,12 +106,10 @@ public class CategoryGeneratorTest {
         return types[(int)(Math.random() * types.length)] + " " + getRandomLastName() + " " + ((int)(Math.random()*500));
     }
 
-    private List<Client> getRandomClients(int count) {
+    private List<Client> getRandomClients(int count, List<Payment> payments) {
         List<Client> result = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            Client client = new Client(i, true, 0, getRandomName(), getRandomLastName(), getRandomPhone(),
-                    getRandomHomeAddress(), getRandomMail(), getRandomDate(), "", getRandomPlans());
-            if (randomInt(1, 3) == 1) client.setInactive(true);
+            Client client = generateRandomClient(i, getRandomDate(), MAX_DATE, payments);
             result.add(client);
         }
         return result;

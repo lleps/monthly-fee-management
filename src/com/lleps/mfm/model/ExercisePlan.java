@@ -1,9 +1,27 @@
 package com.lleps.mfm.model;
 
+import com.lleps.mfm.view.ExercisePlanView;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
 public class ExercisePlan implements Serializable {
+    public static String[] defaultColumns = { "Ejercicio", "Series", "Repeticiones", "Pausa" };
+
+    public static String[][] getEmptyExercises() {
+        String[][] emptyExercises = new String[36][4];
+        for (int i = 0; i < emptyExercises.length; i++) {
+            for (int j = 0; j < emptyExercises[i].length; j++) {
+                if (i == 0) {
+                    emptyExercises[i][j] = defaultColumns[j];
+                } else {
+                    emptyExercises[i][j] = "";
+                }
+            }
+        }
+        return emptyExercises;
+    }
+
     private final String name;
     private final LocalDate date;
     private String[][] exercises;

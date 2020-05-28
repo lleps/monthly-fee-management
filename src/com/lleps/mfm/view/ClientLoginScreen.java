@@ -21,9 +21,9 @@ public class ClientLoginScreen {
     private static final int MILLIS_TO_SHOW_ASTERISK = 500;
     private static final int ID_LENGTH = 8;
     private static final Color COLOR_CLEAR = new Color(0, 0, 0, 0);
-    private static final Color ERROR_BACKGROUND = Color.decode("#B71C1C");
+    private static final Color ERROR_BACKGROUND = Color.decode("#FF8A80");
     private static final Color SUCCESS_BACKGROUND = Color.decode("#00C853");
-    private static final Color DEFAULT_BACKGROUND = Color.decode("#FFD600");
+    private static final Color DEFAULT_BACKGROUND = Color.decode("#ffe419");
     private JLabel idLabel;
     private JPanel rootPanel;
     private JPanel transparentPanel1;
@@ -83,6 +83,12 @@ public class ClientLoginScreen {
             Timer t = new Timer(500, (e) -> playSound("error"));
             t.setRepeats(false);
             t.start();
+        } else if (daysToExpire == Integer.MAX_VALUE) {
+            setColorWithTransition(rootPanel, ERROR_BACKGROUND, 0.5f);
+            titleLabel.setText("Este DNI aun no pago cuotas.");
+            Timer t = new Timer(500, (e) -> playSound("error"));
+            t.setRepeats(false);
+            t.start();
         } else {
             setColorWithTransition(rootPanel, SUCCESS_BACKGROUND, 0.5f);
             playSound("success");
@@ -99,11 +105,14 @@ public class ClientLoginScreen {
 
     private Integer checkDaysForDniExpiry(int dni) {
         Payment lastPayment = null;
+        boolean registeredButNeverPaidAnything = false;
         for (Category category : categoryList) {
             Optional<Client> client = category
                     .getClients()
                     .stream()
-                    .filter(theClient -> theClient.getDni() == dni)
+                    .filter(theClient -> {
+                        return theClient.getDni() == dni;
+                    })
                     .findFirst();
 
             if (!client.isPresent()) continue; // doesn't exists in this category
@@ -112,13 +121,21 @@ public class ClientLoginScreen {
                     .stream()
                     .filter(payment -> payment.getClientId() == clientId)
                     .max((p1, p2) -> (int)(p1.getMonthDate().toEpochDay() - p2.getMonthDate().toEpochDay()));
-            if (!categoryLastPayment.isPresent()) continue;
+            if (!categoryLastPayment.isPresent()) {
+                registeredButNeverPaidAnything = true;
+                continue;
+            }
             Payment categoryPayment = categoryLastPayment.get();
             if (lastPayment == null || (categoryPayment.getMonthDate().toEpochDay() > lastPayment.getMonthDate().toEpochDay())) {
                 lastPayment = categoryPayment;
             }
         }
-        if (lastPayment == null) return null;
+        if (lastPayment == null) {
+            if (registeredButNeverPaidAnything) {
+                return Integer.MAX_VALUE;
+            }
+            return null;
+        }
         LocalDate expiry = lastPayment.getMonthDate().plusMonths(1);
         LocalDate now = LocalDate.now();
         return (int) (expiry.toEpochDay() - now.toEpochDay());
