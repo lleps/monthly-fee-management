@@ -21,7 +21,7 @@ public class ClientLoginScreen {
     private static final int MILLIS_TO_SHOW_ASTERISK = 500;
     private static final int ID_LENGTH = 8;
     private static final Color COLOR_CLEAR = new Color(0, 0, 0, 0);
-    private static final Color ERROR_BACKGROUND = Color.decode("#FF8A80");
+    private static final Color ERROR_BACKGROUND = Color.decode("#F44336");
     private static final Color SUCCESS_BACKGROUND = Color.decode("#00C853");
     private static final Color DEFAULT_BACKGROUND = Color.decode("#ffe419");
     private JLabel idLabel;
@@ -176,7 +176,7 @@ public class ClientLoginScreen {
     private void setColorWithTransition(JComponent component, Color finalColor, float seconds) {
         FloatWrapper wrapper = new FloatWrapper(0f); // progress in transition, from 0 to 1
         Color initialColor = component.getBackground();
-        float frequency = 0.025f; // millis
+        float frequency = 0.016f; // millis
         float wrapperDelta = 1f / (seconds / frequency);
         Timer timer = new Timer((int)(frequency * 1000f), evt -> {
             float ratio = 1f - wrapper.value;
