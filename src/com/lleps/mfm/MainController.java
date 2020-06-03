@@ -8,6 +8,7 @@ import com.lleps.mfm.model.Category;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -27,6 +28,7 @@ public class MainController {
         ClientLoginScreen.initLoginScreen(categories);
 
         view = new MainView();
+        view.setMinimumSize(new Dimension(512, 512));
         view.setTitle("Gestión de cuotas de clientes");
         view.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         view.addWindowListener(new WindowAdapter() {

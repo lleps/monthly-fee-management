@@ -1,5 +1,6 @@
 package com.lleps.mfm.view;
 
+import com.lleps.mfm.Resources;
 import com.lleps.mfm.Utils;
 import com.lleps.mfm.model.Category;
 import com.lleps.mfm.model.Client;
@@ -259,11 +260,13 @@ public class ClientLoginScreen {
 
     public static void toggle(boolean toggle) {
         if (frame == null) {
-            frame = new JFrame();
+            frame = new JFrame("Ingreso de DNI");
+            frame.setMinimumSize(new Dimension(1024, 1024));
             frame.setContentPane(screen.rootPanel);
+            frame.setIconImage(Resources.getInstance().APP_IMAGE);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(true);
-            frame.setFocusable(true);
+            //frame.setUndecorated(true);
+            //frame.setFocusable(true);
             frame.setAlwaysOnTop(true);
             frame.addKeyListener(new KeyListener() {
                 @Override
@@ -282,6 +285,10 @@ public class ClientLoginScreen {
             });
         }
         frame.setVisible(toggle);
+        if (toggle) {
+            frame.toFront();
+            frame.requestFocus();
+        }
     }
 
     public static void main(String[] args) throws IOException {
