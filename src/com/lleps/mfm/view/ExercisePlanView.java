@@ -4,6 +4,9 @@ import com.alee.laf.button.WebButton;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.html.WebColors;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.lleps.mfm.Resources;
@@ -31,6 +34,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -174,8 +179,10 @@ public class ExercisePlanView extends JDialog {
         });
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         SwingUtilities.invokeLater(() -> {
-            baseScroll.getColumnHeader().setVisible(false);
-            baseScroll.revalidate();
+            if (baseScroll != null && baseScroll.getColumnHeader() != null) {
+                baseScroll.getColumnHeader().setVisible(false);
+                baseScroll.revalidate();
+            }
         });
     }
 
@@ -237,50 +244,102 @@ public class ExercisePlanView extends JDialog {
         PdfWriter writer = PdfWriter.getInstance(document, stream);
         writer.setInitialLeading(20f);
         document.open();
-        Image img = Image.getInstance(ClassLoader.getSystemResource("resources/pdfimage.jpg"));
-        document.add(img);
-        Font defaultFont = FontFactory.getFont("arial", 12, Font.BOLD, BaseColor.BLACK);
 
-        document.add(new Paragraph("Nombre: " + client.getFirstName() + " " + client.getLastName(), defaultFont));
-        document.add(new Paragraph("Observaciones: " + client.getObservations(), defaultFont));
-        document.add(new Paragraph("Ingreso: " + client.getInscriptionDate().format(Utils.DATE_FORMATTER), defaultFont));
+        // bg
+        Image bgImg = Image.getInstance(ClassLoader.getSystemResource("resources/pdf-background.jpg"));
+        bgImg.setAbsolutePosition(0, 0);
+        bgImg.scaleAbsolute(document.getPageSize());
+        document.add(bgImg);
+
+        // Head
+        Font headerFontBold = FontFactory.getFont("/resources/Heading-Compressed-Pro-Heavy.ttf",
+                BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 20, Font.NORMAL, new BaseColor(0xFF363636));
+        Font headerFont = FontFactory.getFont("Arial",
+                BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 19, Font.NORMAL, new BaseColor(0xFF363636));
+
+        // cell fonts
+        Font cellFontBold = FontFactory.getFont("/resources/Montserrat-Regular.ttf",
+                BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 13, Font.BOLD, new BaseColor(0xFF111111));
+
+        // aux spacing font
+        Font spacingFont = FontFactory.getFont("/resources/Montserrat-Regular.ttf",
+                BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 8, Font.NORMAL, new BaseColor(0xFF111111));
+
+        // Nombre
+        Phrase phrase = new Phrase();
+        phrase.add(new Chunk("Nombre: ", headerFontBold));
+        phrase.add(new Chunk(client.getFirstName() + " " + client.getLastName(), headerFont));
+        document.add(new Paragraph(" ", spacingFont)); // space
+        document.add(phrase);
+
+        // Observaciones
+        phrase = new Phrase();
+        phrase.add(new Chunk("Observaciones: ", headerFontBold));
+        phrase.add(new Chunk(client.getObservations(), headerFont));
+        document.add(new Paragraph(" ", spacingFont)); // space
+        document.add(phrase);
+
+        // Ingreso
+        phrase = new Phrase();
+        phrase.add(new Chunk("Ingreso: ", headerFontBold));
+        phrase.add(new Chunk(client.getInscriptionDate().format(Utils.DATE_FORMATTER), headerFont));
+        document.add(new Paragraph(" ", spacingFont)); // space
+        document.add(phrase);
+
         document.add(new Paragraph(" ")); // space
+        document.add(new Paragraph(" ")); // space
+        document.add(new Paragraph(" ")); // space
+        document.add(new Paragraph(" ")); // space
+
         PdfPTable table = new PdfPTable(plan.getExercises()[0].length);
         for (int row = 0; row < exercises.getRowCount(); row++) {
             for (int column = 0; column < exercises.getColumnCount(); column++) {
                 if (row == 0) {
-                    table.addCell(new Paragraph(exercises.getValueAt(row, column).toString(),
-                            FontFactory.getFont("arial",
-                                    13,
-                                    Font.BOLD,
-                                    BaseColor.BLACK)));
+                    Paragraph p = new Paragraph(exercises.getValueAt(row, column).toString(), cellFontBold);
+                    PdfPCell cell = new PdfPCell(p);
+                    cell.setBackgroundColor(WebColors.getRGBColor("#fce404"));
+                    table.addCell(cell);
                 } else {
-                    table.addCell(exercises.getValueAt(row, column).toString() + " ");
+                    table.addCell(new Paragraph(exercises.getValueAt(row, column).toString() + " ",
+                            FontFactory.getFont("/resources/Montserrat-Regular.ttf",
+                            BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 13, Font.NORMAL, new BaseColor(0xFF111111))));
                 }
             }
         }
         document.add(table);
         document.close();
 
-        // Send email
         FloatingMessageView.show("Enviando...");
-        final String username = "gimnasio653vcp@gmail.com";
-        final String password = "gymgymgym";
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setText("Plan " + plan.getName());
-
         return stream.toByteArray();
+    }
+
+    public static void main(String[] args) {
+        String[][] exc = ExercisePlan.getEmptyExercises();
+        exc[0] = new String[] { "Ejercicio", "Tiempo", "Serie", "Descanso" };
+        for (int i = 1; i < 30; i++) {
+            exc[i][0] = "Spinning";
+            exc[i][1] = "Bici";
+            exc[i][2] = "Biceps";
+            exc[i][3] = "Mancuernas";
+        }
+
+        ExercisePlanView view = new ExercisePlanView(
+                new Category(
+                        "",
+                        0,
+                        new ArrayList<Client>(),
+                        new ArrayList<>(),
+                        new ArrayList<>()),
+                new Client(0, false, 0, "Leandro", "Herrera",
+                        "ASD", "", "", LocalDate.now(), "-",
+                        new ArrayList<>()), new ExercisePlan("asd", LocalDate.MAX, exc));
+
+        try {
+            Files.write(Paths.get("C:\\Users\\leand\\Desktop\\Facultad\\plan.pdf"), view.createExercisesPlanPDF());
+            FloatingMessageView.show("Guardando...");
+        } catch (Exception ex) {
+            Utils.reportException(ex, "error exporting file");
+        }
+        FloatingMessageView.hide();
     }
 }

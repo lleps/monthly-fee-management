@@ -21,9 +21,9 @@ public class ClientLoginScreen {
     private static final int MILLIS_TO_SHOW_ASTERISK = 500;
     private static final int ID_LENGTH = 8;
     private static final Color COLOR_CLEAR = new Color(0, 0, 0, 0);
-    private static final Color ERROR_BACKGROUND = Color.decode("#F44336");
-    private static final Color SUCCESS_BACKGROUND = Color.decode("#00C853");
-    private static final Color DEFAULT_BACKGROUND = Color.decode("#ffe419");
+    private static final Color ERROR_BACKGROUND = Color.decode("#121212");
+    private static final Color SUCCESS_BACKGROUND = Color.decode("#fce404");
+    private static final Color DEFAULT_BACKGROUND = Color.decode("#363636");
     private JLabel idLabel;
     private JPanel rootPanel;
     private JPanel transparentPanel1;
@@ -164,6 +164,10 @@ public class ClientLoginScreen {
             this.id = 0;
             setIdLabel(0);
         }
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 
     private static class FloatWrapper {

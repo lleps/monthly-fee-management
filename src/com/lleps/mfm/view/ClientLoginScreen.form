@@ -24,8 +24,8 @@
             </constraints>
             <properties>
               <background color="-2314"/>
-              <font name="Droid Sans Mono" size="48" style="1"/>
-              <foreground color="-11843774"/>
+              <font name="Dialog" size="48" style="1"/>
+              <foreground color="-1"/>
               <text value="Ingresa tu DNI"/>
             </properties>
           </component>
@@ -55,7 +55,7 @@
             <properties>
               <background color="-1050113"/>
               <font name="Consolas" size="48" style="0"/>
-              <foreground color="-11843774"/>
+              <foreground color="-1"/>
               <text value="_ _ _ _ _ _ _ _"/>
             </properties>
           </component>
