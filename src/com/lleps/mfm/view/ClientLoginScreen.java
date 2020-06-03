@@ -98,15 +98,16 @@ public class ClientLoginScreen {
         colorRedExpiry = System.currentTimeMillis() + 3500;
     }
 
-    private ArrayList<Category> categoryList;
+    private java.util.List<Category> categoryList;
 
-    public void setCategoryList(ArrayList<Category> categoryList) {
+    public void setCategoryList(java.util.List<Category> categoryList) {
         this.categoryList = categoryList;
     }
 
     private Integer checkDaysForDniExpiry(int dni) {
         Payment lastPayment = null;
         boolean registeredButNeverPaidAnything = false;
+        System.out.println("will look at " + categoryList.size() + " categories.");
         for (Category category : categoryList) {
             Optional<Client> client = category
                     .getClients()
@@ -255,7 +256,7 @@ public class ClientLoginScreen {
 
     public static void initLoginScreen(java.util.List<Category> categoryList) {
         screen = new ClientLoginScreen();
-        screen.setCategoryList(new ArrayList<>(categoryList));
+        screen.setCategoryList(categoryList);
     }
 
     public static void toggle(boolean toggle) {

@@ -34,6 +34,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -103,9 +104,16 @@ public class ExercisePlanView extends JDialog {
                     chooser.setSelectedFile(new File(plan.getName() + "-" + client.getFirstName() + "-" + client.getLastName() + ".pdf"));
                     int option = chooser.showSaveDialog(this);
                     if (option == JFileChooser.APPROVE_OPTION) {
+                        FloatingMessageView.hide();
+                        Path path = chooser.getSelectedFile().toPath();
+
                         try {
-                            Files.write(chooser.getSelectedFile().toPath(), createExercisesPlanPDF());
-                            FloatingMessageView.show("Guardando...");
+                            if (!Files.exists(path) || (Files.exists(path) && path.toString().endsWith(".pdf"))) {
+                                Files.write(path, createExercisesPlanPDF());
+                                FloatingMessageView.show("Guardando...");
+                            } else {
+                                JOptionPane.showMessageDialog(chooser, "No se puede sobreescribir. Elija otro nombre.");
+                            }
                         } catch (Exception ex) {
                             Utils.reportException(ex, "error exporting file");
                         }

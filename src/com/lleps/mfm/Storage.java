@@ -30,7 +30,7 @@ public class Storage {
         return instance;
     }
 
-    private final static String DATA_FOLDERNAME = ".monthly-fee-management";
+    private final static String DATA_FOLDERNAME = "gym";
     private final static String CONFIG_FILENAME = "config.properties";
     private final static String CLIENTS_FILENAME = "clients.list";
     private final static String PAYMENTS_FILENAME = "payments.list";
@@ -41,7 +41,7 @@ public class Storage {
     private final File categoriesFolder;
 
     private Storage() {
-        userFolder = new File(System.getProperty("user.home"));
+        userFolder = new File("./datos");
         mainFolder = new File(userFolder, DATA_FOLDERNAME);
         mainFolder.mkdirs();
 

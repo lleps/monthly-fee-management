@@ -45,7 +45,7 @@ public class ClientPaymentsView extends JDialog {
                 cancelButtonListener.actionPerformed(e);
             }
         });
-        setSize(new Dimension(450, 450));
+        setSize(new Dimension(600, 450));
     }
 
     public void setAcceptButtonListener(ActionListener acceptButtonListener) {

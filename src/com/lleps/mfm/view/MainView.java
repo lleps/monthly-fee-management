@@ -99,7 +99,7 @@ public class MainView extends JFrame {
         for (CategoryView cv : categoryViews) {
             tabbedPane.addTab(cv.getName(), cv);
         }
-        JButton button = new JButton("+");
+        JButton button = new JButton(categoryViews.size() == 0 ? "Click aquí para agregar la primer categoría." : "+");
         button.addActionListener(e -> {
             if (newCategoryListener != null) {
                 newCategoryListener.actionPerformed(e);

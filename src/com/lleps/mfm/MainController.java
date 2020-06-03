@@ -22,9 +22,11 @@ import java.util.List;
  */
 public class MainController {
     MainView view;
+    List<Category> categories;
     List<CategoryController> categoryControllers = new ArrayList<>();
 
     MainController(List<Category> categories) {
+        this.categories = categories;
         ClientLoginScreen.initLoginScreen(categories);
 
         view = new MainView();
@@ -86,6 +88,7 @@ public class MainController {
 
                     Storage.getInstance().saveCategory(category);
                     addCategory(category);
+                    categories.add(category);
                 } catch (IOException e2) {
                     Utils.reportException(e2, "Error guardando la categoría.\n" +
                             "Asegurese que el nombre no contenga caracteres diferentes de a-z 0-9 ");
@@ -114,6 +117,9 @@ public class MainController {
                     if (choosedOption == JOptionPane.YES_OPTION) {
                         view.removeCategory(categoryView);
                         Storage.getInstance().removeCategory(category);
+                        categories.remove(category);
+                        Category finalCategory = category;
+                        categoryControllers.removeIf(controller -> controller.category == finalCategory);
                     }
                 }
             });
