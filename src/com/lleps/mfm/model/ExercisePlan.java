@@ -9,7 +9,7 @@ public class ExercisePlan implements Serializable {
     public static String[] defaultColumns = { "Ejercicio", "Series", "Repeticiones", "Pausa" };
 
     public static String[][] getEmptyExercises() {
-        String[][] emptyExercises = new String[36][4];
+        String[][] emptyExercises = new String[66][4];
         for (int i = 0; i < emptyExercises.length; i++) {
             for (int j = 0; j < emptyExercises[i].length; j++) {
                 if (i == 0) {

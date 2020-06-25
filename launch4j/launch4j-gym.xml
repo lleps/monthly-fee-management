@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Dev\monthly-fee-management\out\artifacts\monthly_fee_management_jar\monthly-fee-management.jar</jar>
+  <jar>jre64\monthly-fee-management.jar</jar>
   <outfile>Gestión de clientes.exe</outfile>
   <errTitle>Necesitas descargar Java.</errTitle>
   <cmdLine></cmdLine>

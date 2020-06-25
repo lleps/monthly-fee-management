@@ -61,6 +61,7 @@ public class ExercisePlanView extends JDialog {
 
     private Category category;
     private Client client;
+    private Timer autosaveTimer;
 
     public ExercisePlanView(Category category, Client client, ExercisePlan plan) {
         super();
@@ -93,6 +94,11 @@ public class ExercisePlanView extends JDialog {
                 }
             }
         });
+
+        autosaveTimer = new Timer(3000, e -> {
+            savePlan();
+        });
+        autosaveTimer.start();
 
         exercises.setModel(new DefaultTableModel(plan.getExercises().clone(), ExercisePlan.defaultColumns));
         exercises.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -208,9 +214,7 @@ public class ExercisePlanView extends JDialog {
         }
     }
 
-    private void onCancel() {
-        exercises.transferFocusBackward();
-
+    private void savePlan() {
         // Save client exercises based on table data
         String[][] planExercises = plan.getExercises().clone();
         for (int i = 0; i < planExercises.length; i++) {
@@ -228,6 +232,12 @@ public class ExercisePlanView extends JDialog {
         } catch (IOException e) {
             Utils.reportException(e, "error saving category");
         }
+    }
+
+    private void onCancel() {
+        exercises.transferFocusBackward();
+        savePlan();
+        autosaveTimer.stop();
         dispose();
     }
 
