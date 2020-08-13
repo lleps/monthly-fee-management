@@ -207,6 +207,13 @@ public class CategoryController {
         });
 
         paymentsView.setCancelButtonListener(e -> paymentsView.dispose());
+        paymentsView.setOnDeletePaymentListener(payment -> {
+            removePayment(payment);
+            paymentsView.dispose();
+            SwingUtilities.invokeLater(() -> {
+                showPaymentsDialog(client);
+            });
+        });
         paymentsView.setLocationRelativeTo(view);
         paymentsView.setVisible(true);
     }
@@ -282,6 +289,12 @@ public class CategoryController {
 
     private void addPayment(Payment payment) {
         category.addPayment(payment);
+        updateTable();
+        savePayments();
+    }
+
+    private void removePayment(Payment payment) {
+        category.removePayment(payment);
         updateTable();
         savePayments();
     }

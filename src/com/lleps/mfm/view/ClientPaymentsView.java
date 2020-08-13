@@ -7,13 +7,18 @@ import com.lleps.mfm.Resources;
 import com.lleps.mfm.Utils;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ClientPaymentsView extends JDialog {
     private JPanel contentPane;
@@ -21,13 +26,16 @@ public class ClientPaymentsView extends JDialog {
     private JButton buttonCancel;
     private JComboBox monthsComboBox;
     private JTextField amountField;
-    private JLabel previousPaymentsLabel;
     private JTextArea observationsField;
     private JLabel lastPaymentsLabel;
     private JPanel datePanel;
+    private JList paymentList;
     private ActionListener acceptButtonListener;
     private ActionListener cancelButtonListener;
     private WebDateField dateField;
+
+    private List<Payment> previousPayments;
+    private Consumer<Payment> onDeletePaymentListener;
 
     public ClientPaymentsView() {
         setContentPane(contentPane);
@@ -45,7 +53,8 @@ public class ClientPaymentsView extends JDialog {
                 cancelButtonListener.actionPerformed(e);
             }
         });
-        setSize(new Dimension(600, 450));
+        paymentList.addListSelectionListener(e -> onClickPayment(e.getFirstIndex()));
+        setSize(new Dimension(600, 550));
     }
 
     public void setAcceptButtonListener(ActionListener acceptButtonListener) {
@@ -54,6 +63,10 @@ public class ClientPaymentsView extends JDialog {
 
     public void setCancelButtonListener(ActionListener cancelButtonListener) {
         this.cancelButtonListener = cancelButtonListener;
+    }
+
+    public void setOnDeletePaymentListener(Consumer<Payment> onDeletePaymentListener) {
+        this.onDeletePaymentListener = onDeletePaymentListener;
     }
 
     public void setAmountField(int value) {
@@ -76,19 +89,32 @@ public class ClientPaymentsView extends JDialog {
         }
     }
 
+    private void onClickPayment(int paymentIndex) {
+        if (this.previousPayments == null) return;
+        if (paymentIndex >= 0 && paymentIndex < this.previousPayments.size()) {
+            final Payment p = previousPayments.get(paymentIndex);
+            int response = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Eliminar permanentemente este pago?", "Confirmar",
+                    JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                if (onDeletePaymentListener != null) {
+                    onDeletePaymentListener.accept(p);
+                }
+            }
+        }
+    }
+
     public void setPreviousPayments(List<Payment> payments) {
-        String string = "<html>";
+        List<String> paymentsItem = new ArrayList<>();
         for (Payment payment : payments) {
-            string += String.format("El %s pago <b><font color=green>%s</font></b> por $%d<br>",
+            paymentsItem.add(String.format("El %s ha pagado %s por $%d",
                     payment.getEmitDate().format(Utils.DATE_FORMATTER),
                     Utils.getMonthWithYear(payment.getMonthDate()),
-                    payment.getMoney());
+                    payment.getMoney()));
         }
-        if (payments.isEmpty()) {
-            string += "Ninguno";
-        }
-        string += "</html>";
-        previousPaymentsLabel.setText(string);
+        paymentList.setListData(paymentsItem.toArray());
+        this.previousPayments = payments;
     }
 
     public void setSelectableMonths(List<LocalDate> months) {
