@@ -170,32 +170,18 @@ public class CategoryController {
         paymentsView.setAmountField(category.getMonthPrice());
         paymentsView.setObservations(client.getObservations());
 
-        int monthsExtents = 4;
-        List<LocalDate> selectableMonths = getPreviousMonthsSince(LocalDate.now().plusMonths(monthsExtents), monthsExtents * 2);
+        // preselect next payment month
         Optional<Payment> lastPaymentOpt = getClientLastPayment(client);
-
-        int dayOfMonth = client.getInscriptionDate().getDayOfMonth();
-        dayOfMonth = Math.min(28, dayOfMonth); // truncate to 28
-
-        LocalDate preselectedDate = LocalDate.now().withDayOfMonth(dayOfMonth);
         if (lastPaymentOpt.isPresent()) {
-            LocalDate lastPaymentDate = lastPaymentOpt.get().getMonthDate();
-            selectableMonths = selectableMonths.stream()
-                    .filter(month -> month.isAfter(lastPaymentDate))
-                    .collect(Collectors.toList());
-            preselectedDate = lastPaymentDate.plusMonths(1);
-            if (selectableMonths.isEmpty()) { // Empty only if clients paid all possible months
-                selectableMonths.add(preselectedDate);
-            }
+            paymentsView.setSelectedMonth(lastPaymentOpt.get().getMonthDate().plusMonths(1));
+        } else {
+            paymentsView.setSelectedMonth(LocalDate.now());
         }
-
-        paymentsView.setSelectableMonths(selectableMonths);
-        paymentsView.setSelectedMonth(preselectedDate);
 
         paymentsView.setAcceptButtonListener(e -> {
             int priceToPay = paymentsView.getAmountField().orElse(category.getMonthPrice());
             Payment payment = new Payment(client.getId(), priceToPay,
-                    paymentsView.getSelectedMonth(), paymentsView.getSelectedDate());
+                    paymentsView.getSelectedMonth(), LocalDate.now());
             if (!client.getObservations().equals(paymentsView.getObservations())) {
                 client.setObservations(paymentsView.getObservations());
                 saveClients();

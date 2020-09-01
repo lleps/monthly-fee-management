@@ -7,9 +7,6 @@ import com.lleps.mfm.Resources;
 import com.lleps.mfm.Utils;
 
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
@@ -24,7 +21,6 @@ public class ClientPaymentsView extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox monthsComboBox;
     private JTextField amountField;
     private JTextArea observationsField;
     private JLabel lastPaymentsLabel;
@@ -54,7 +50,7 @@ public class ClientPaymentsView extends JDialog {
             }
         });
         paymentList.addListSelectionListener(e -> onClickPayment(e.getFirstIndex()));
-        setSize(new Dimension(600, 550));
+        setSize(new Dimension(400, 550));
     }
 
     public void setAcceptButtonListener(ActionListener acceptButtonListener) {
@@ -108,9 +104,9 @@ public class ClientPaymentsView extends JDialog {
     public void setPreviousPayments(List<Payment> payments) {
         List<String> paymentsItem = new ArrayList<>();
         for (Payment payment : payments) {
-            paymentsItem.add(String.format("El %s ha pagado %s por $%d",
+            paymentsItem.add(String.format("El %s pagó la cuota del %s por $%d",
                     payment.getEmitDate().format(Utils.DATE_FORMATTER),
-                    Utils.getMonthWithYear(payment.getMonthDate()),
+                    payment.getMonthDate().format(Utils.DATE_FORMATTER),
                     payment.getMoney()));
         }
         paymentList.setListData(paymentsItem.toArray());
@@ -118,28 +114,23 @@ public class ClientPaymentsView extends JDialog {
     }
 
     public void setSelectableMonths(List<LocalDate> months) {
-        monthsComboBox.removeAllItems();
+        /*monthsComboBox.removeAllItems();
         for (LocalDate date : months) {
             monthsComboBox.addItem(new DateItem(Utils.firstUpperCase(Utils.getMonthWithYear(date)), date));
-        }
+        }*/
     }
 
     public void setSelectedMonth(LocalDate month) {
-        for (int i = 0; i < monthsComboBox.getItemCount(); i++) {
-            if (((DateItem)monthsComboBox.getItemAt(i)).date.equals(month)) {
-                monthsComboBox.setSelectedIndex(i);
-                return;
-            }
-        }
+        Date date = Date.from(month.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        dateField.setDate(date);
     }
 
     public LocalDate getSelectedMonth() {
-        return ((DateItem)monthsComboBox.getSelectedItem()).date;
+        return dateToLocalDate(dateField.getDate());
     }
 
-    public LocalDate getSelectedDate() {
-        Date input = dateField.getDate();
-        return input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private static LocalDate dateToLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private void createUIComponents() {
